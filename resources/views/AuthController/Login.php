@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Monitoring Urban Farming</title>
+    <title>Login - Sistem Monitoring Urban Farming</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-emerald-50 min-h-screen flex items-center justify-center p-4">
     <div class="max-w-md w-full bg-white rounded-xl shadow-lg p-8">
-        <h2 class="text-2xl font-bold text-center text-emerald-800 mb-6">Login Urban Farming</h2>
+        <h2 class="text-2xl font-bold text-center text-emerald-800 mb-6">Login Monitoring Urban Farming</h2>
 
         @if ($errors->any())
             <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
