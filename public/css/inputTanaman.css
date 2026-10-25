@@ -1,0 +1,96 @@
+body {
+    background-color: #f4f7f6;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 20px;
+}
+
+.main-container {
+    max-width: 600px;
+    margin: 0 auto;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+}
+
+.banner-header {
+    background: linear-gradient(135deg, #2d6a4f, #52b788);
+    color: white;
+    padding: 30px 20px;
+    text-align: center;
+}
+
+.banner-title {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 600;
+    line-height: 1.4;
+}
+
+.form-content {
+    padding: 25px;
+}
+
+.form-card-box {
+    background: #f9fbf9;
+    border: 1px solid #e0e8e0;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 500;
+    color: #333;
+    font-size: 14px;
+}
+
+.form-control {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 14px;
+    box-sizing: border-box;
+    transition: border-color 0.2s;
+}
+
+.form-control:focus {
+    border-color: #52b788;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(82, 183, 136, 0.15);
+}
+
+.row-group {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.col-half {
+    flex: 1;
+}
+
+.btn-submit {
+    width: 100%;
+    background-color: #2d6a4f;
+    color: white;
+    border: none;
+    padding: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.btn-submit:hover {
+    background-color: #1b4332;
+}
