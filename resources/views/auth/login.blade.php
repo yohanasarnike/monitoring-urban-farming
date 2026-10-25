@@ -254,9 +254,7 @@
             display: flex;
             align-items: center;
             gap: 12px;
-
             margin: 20px 0;
-
             color: #766853;
             font-size: 12px;
         }
@@ -274,17 +272,13 @@
             align-items: center;
             justify-content: center;
             gap: 9px;
-
             width: 100%;
             min-height: 44px;
             padding: 10px;
-
             border: none;
             border-radius: 9px;
-
             background: #fff;
             color: #51483c;
-
             font-family: inherit;
             font-size: 12px;
             font-weight: 700;
@@ -358,7 +352,7 @@
 
         <div class="intro">
             <h1 class="intro-title">Selamat Datang </h1>
-            <p class="intro-description">Mulai perjalanan menanam yang lebih mudah, teratur, dan berkelanjutan.s</p>
+            <p class="intro-description">Mulai perjalanan menanam yang lebih mudah, teratur, dan berkelanjutan</p>
         </div>
 
         <div class="login-form">
@@ -405,8 +399,35 @@
                             autocomplete="current-password"
                             required>
 
-                        <button type="button" class="toggle-password" onclick="togglePassword()" aria-label="Tampilkan password">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <button
+                            type="button"
+                            class="toggle-password"
+                            onclick="togglePassword()"
+                            aria-label="Tampilkan password">
+
+                            <!-- Ketika Mata tertutup untuk kondisi awalnya -->
+                            <svg id="eyeClosed"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="1.8"
+                                stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <path d="M3 3l18 18"></path>
+                                <path d="M10.6 10.6a2 2 0 0 0 2.8 2.8"></path>
+                                <path d="M9.9 5.2A10.8 10.8 0 0 1 12 5c5 0 9 7 9 7a15.5 15.5 0 0 1-4 4.8"></path>
+                                <path d="M6.6 6.6C4.1 8.2 3 12 3 12s4 7 9 7a10 10 0 0 0 4-.8"></path>
+                            </svg>
+
+                            <!-- Mata terbuka: ketika password terlihat -->
+                            <svg id="eyeOpen"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="1.8"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                style="display: none;">
                                 <path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7-10-7-10-7z"></path>
                                 <circle cx="12" cy="12" r="3"></circle>
                             </svg>
@@ -441,19 +462,32 @@
             <!-- Link ke halaman registrasinya -->
             <div class="register-text">
                 Belum punya akun?
-                <a href="{{ route('register') }}" class="register-link">
+                <a href="{{ route('register') }}" class="register-link">Daftar &gt
                 </a>
             </div>
         </div>
     </main>
 
+
     <script>
-        // FUngsi: ubah tipe input password <-> text
         function togglePassword() {
-            var input = docment.getElementById('password');
-            input.type = (input.type === 'password') ? 'text' : 'password';
+            const input = document.getElementById('password');
+            const eyeOpen = document.getElementById('eyeOpen');
+            const eyeClosed = document.getElementById('eyeClosed');
+
+            if (input.type === 'password') {
+                input.type = 'text';
+                eyeOpen.style.display = 'block';
+                eyeClosed.style.display = 'none';
+            } else {
+                input.type = 'password';
+                eyeOpen.style.display = 'none';
+                eyeClosed.style.display = 'block';
+            }
         }
     </script>
+
+
 </body>
 
 </html>
