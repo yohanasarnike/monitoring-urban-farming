@@ -92,6 +92,7 @@
             background: rgba(255, 255, 255, 0.18);
         }
 
+
         .nav-menu .btn-register {
             background: transparent;
         }

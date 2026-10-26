@@ -185,6 +185,12 @@ class TanamanController extends Controller
             $idPemilik
         )->get();
 
+        // 🟢 TAMBAHKAN INI: Jika user belum punya tanaman sama sekali, lempar ke halaman tambah tanaman!
+        if ($tanamanAktif->isEmpty()) {
+            return redirect('/tanaman/tambah')
+                ->with('info', 'Silakan tambahkan tanaman pertama kamu terlebih dahulu.');
+        }
+
         foreach ($tanamanAktif as $tanaman) {
             $this->generateJadwalTanaman(
                 $tanaman,
@@ -270,11 +276,7 @@ class TanamanController extends Controller
             );
         });
 
-        return redirect('/jadwal-perawatan')
-            ->with(
-                'success',
-                'Tanaman berhasil ditambahkan dan jadwal dibuat sesuai kriteria!'
-            );
+        return redirect('/dahboard');
     }
 
     /**
