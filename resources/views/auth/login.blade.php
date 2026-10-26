@@ -358,6 +358,15 @@
         <div class="login-form">
             <h2 class="login-title">Masuk ke Akunmu</h2>
 
+
+            <!-- pesan ketikan validasi berhasil -->
+            @if (session('success'))
+            <div class="success-message">
+                {{ session('success') }}
+            </div>
+            @endif
+
+
             <!-- pesan erro akan tampil ketika validasinya error -->
             @if ($errors->any())
             <div class="error-message">
@@ -368,7 +377,7 @@
             @endif
 
             <!-- form akan dikirimkan ke route 'login' menggunakan methode post -->
-            <form action="{{ route('login') }}" method="POST">
+            <form action="{{ route('login.process') }}" method="POST">
                 @csrf
 
                 <!-- input email start -->
@@ -486,8 +495,6 @@
             }
         }
     </script>
-
-
 </body>
 
 </html>

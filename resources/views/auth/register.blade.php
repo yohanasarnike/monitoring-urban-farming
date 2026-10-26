@@ -126,6 +126,15 @@
             font-size: 13px;
         }
 
+        .register-success {
+            padding: 12px;
+            margin-bottom: 16px;
+            border-radius: 10px;
+            background: #dff5e6;
+            color: #236b43;
+            font-size: 13px;
+        }
+
         /* FORM */
         .register-group {
             margin-bottom: 15px;
@@ -259,7 +268,7 @@
             text-decoration: underline;
         }
 
-        /* TABLET */
+        /* deskop */
         @media (max-width: 1024px) {
             .register-page {
                 padding: 60px 2rem;
@@ -313,7 +322,7 @@
             <h2 class="register-heading">
                 Buat Akunmuu
             </h2>
-
+            <!-- pesan error validasi -->
             @if ($errors->any())
             <div class="register-error">
                 @foreach ($errors->all() as $error)
@@ -322,6 +331,14 @@
             </div>
             @endif
 
+            {{-- Pesan berhasil --}}
+            @if (session('success'))
+            <div class="register-success">
+                {{ session('success') }}
+            </div>
+            @endif
+
+            <!-- form register -->
             <form action="{{ route('register.submit') }}" method="POST">
                 @csrf
 
@@ -366,8 +383,8 @@
                         required>
                 </div>
 
-                <button type="submit" class="register-button">Daftar
-
+                <button type="submit" class="register-button">
+                    Daftar
                 </button>
 
                 <!-- pembatas -->
