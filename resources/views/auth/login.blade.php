@@ -462,7 +462,7 @@
             <!-- Link ke halaman registrasinya -->
             <div class="register-text">
                 Belum punya akun?
-                <a href="{{ route('register') }}" class="register-link">Daftar &gt
+                <a href="{{ route('register.submit') }}" class="register-link">Daftar &gt
                 </a>
             </div>
         </div>
