@@ -1,96 +1,232 @@
-body {
-    background-color: #f4f7f6;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    margin: 0;
-    padding: 20px;
-}
 
-.main-container {
-    max-width: 600px;
-    margin: 0 auto;
-    background: #ffffff;
-    border-radius: 12px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-    overflow: hidden;
-}
-
-.banner-header {
-    background: linear-gradient(135deg, #2d6a4f, #52b788);
-    color: white;
-    padding: 30px 20px;
-    text-align: center;
-}
-
-.banner-title {
-    margin: 0;
-    font-size: 24px;
-    font-weight: 600;
-    line-height: 1.4;
-}
-
-.form-content {
-    padding: 25px;
-}
-
-.form-card-box {
-    background: #f9fbf9;
-    border: 1px solid #e0e8e0;
-    border-radius: 8px;
-    padding: 20px;
-    margin-bottom: 20px;
-}
-
-.form-group {
-    margin-bottom: 15px;
-}
-
-.form-group label {
-    display: block;
-    margin-bottom: 6px;
-    font-weight: 500;
-    color: #333;
-    font-size: 14px;
-}
-
-.form-control {
-    width: 100%;
-    padding: 10px 12px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    font-size: 14px;
+* {
     box-sizing: border-box;
-    transition: border-color 0.2s;
 }
 
-.form-control:focus {
-    border-color: #52b788;
-    outline: none;
-    box-shadow: 0 0 0 3px rgba(82, 183, 136, 0.15);
+body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: 'Plus Jakarta Sans', 'Segoe UI', sans-serif;
+    color: #493b2c;
+
+    background:
+        linear-gradient(rgba(15, 35, 20, 0.25), rgba(15, 35, 20, 0.25)),
+        url('https://images.unsplash.com/photo-1530836369250-ef72a3f5cda8?q=80&w=1920&auto=format&fit=crop')
+        center / cover fixed no-repeat;
+}
+
+/* Navbar */
+.top-navbar {
+    width: 100%;
+    padding: 18px 5%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    color: white;
+    background-color: #2d6a4f;
+    backdrop-filter: blur(10px);
+    position: relative;
+    z-index: 2;
+}
+
+.nav-brand {
+    font-size: 18px;
+    font-weight: 700;
+}
+
+
+.nav-menu a:hover,
+.nav-menu a.active {
+    color: #95d5b2;
+}
+
+.btn-nav-back {
+    color: white;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+
+/* Halaman dan kotak form di tengah */
+.split-container {
+    min-height: calc(100vh - 65px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 35px 20px;
+}
+
+/* Hilangkan kolom banner kiri */
+.split-left {
+    display: none;
+}
+
+/* Hilangkan panel kanan yang membatasi lebar */
+.split-right {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0;
+    background: transparent;
+}
+
+/* Kotak form transparan seperti halaman login */
+.form-card-box-modern {
+    width: 100%;
+    max-width: 550px;
+    padding: 16px 22px;
+    border-radius: 24px;
+    border: 1px solid rgba(255, 255, 255, 0.65);
+    background: rgba(254, 255, 254, 0.425);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.18);
+}
+
+.form-main-title {
+    margin: 0 0 20px;
+    padding-bottom: 13px;
+    text-align: center;
+    font-size: 25px;
+    font-weight: 800;
+    color:  #263238;
+    border-bottom: 1px solid rgba(110, 90, 65, 0.2);
 }
 
 .row-group {
-    display: flex;
-    gap: 15px;
-    margin-bottom: 15px;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+    margin-bottom: 14px;
+}
+
+.form-group {
+    margin-bottom: 14px;
+}
+
+.form-group label,
+.col-half label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #263238;
+}
+
+.row-group {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px;
+    margin-bottom: 18px;
 }
 
 .col-half {
-    flex: 1;
+    min-width: 0;
+}
+
+
+.form-control::placeholder {
+    color: #9b9288;
+}
+
+.form-control:focus {
+    border-color: #39856d;
+    box-shadow: 0 0 0 3px rgba(57, 133, 109, 0.14);
+}
+
+/* Tombol simpan */
+.form-control {
+    display: block;
+    width: 100%;
+    min-width: 0;
+    min-height: 44px;
+    padding: 10px 13px;
+    border: 1px solid #e0d7c9;
+    border-radius: 11px;
+    background: #fff;
+    color: #493b2c;
+    font-family: inherit;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
 }
 
 .btn-submit {
+    display: block;
     width: 100%;
-    background-color: #2d6a4f;
-    color: white;
-    border: none;
+    min-height: 48px;
+    margin-top: 20px;
     padding: 12px;
-    font-size: 16px;
-    font-weight: 600;
-    border-radius: 6px;
+    border: none;
+    border-radius: 11px;
+    background: #39856d;
+    color: white;
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 800;
     cursor: pointer;
-    transition: background-color 0.2s;
 }
 
 .btn-submit:hover {
-    background-color: #1b4332;
+    background: #286a54;
+    transform: translateY(-1px);
+}
+
+/* Pesan validasi */
+.alert-error {
+    margin-top: 20px;
+    padding: 14px 18px;
+    border: 1px solid #e9a4a4;
+    border-radius: 12px;
+    background: #fff0f0;
+    color: #991b1b;
+    font-size: 14px;
+}
+
+.alert-error ul {
+    margin: 8px 0 0;
+    padding-left: 22px;
+}
+
+/* Tampilan HP */
+@media (max-width: 600px) {
+    .top-navbar {
+        padding: 15px 18px;
+        flex-wrap: wrap;
+    }
+
+    .nav-brand {
+        font-size: 15px;
+    }
+
+    .btn-nav-back {
+        font-size: 12px;
+    }
+
+    .split-container {
+        padding: 24px 14px;
+    }
+
+    .form-card-box-modern {
+        padding: 26px 20px;
+        border-radius: 22px;
+    }
+
+    .form-main-title {
+        font-size: 24px;
+        margin-bottom: 22px;
+    }
+
+    .row-group {
+        grid-template-columns: 1fr;
+        gap: 18px;
+        margin-bottom: 18px;
+    }
+
+    .form-control {
+        min-height: 50px;
+    }
 }

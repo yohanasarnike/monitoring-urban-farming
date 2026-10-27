@@ -32,13 +32,13 @@ Route::post('/register', [AuthController::class, 'register'])
 Route::post('/logout', [AuthController::class, 'logout'])
     ->name('logout');
     
-
+//input data tabaman
 Route::get('/tanaman/tambah', [TanamanController::class, 'create']);
 Route::post('/tanaman/tambah', [TanamanController::class, 'store']);
 
-
-
+//dashboard utama
 Route::get('/dashboard', [TanamanController::class, 'index'])->name('dashboard');
 
+//jadwal perawatan
 Route::get('/jadwal-perawatan', [TanamanController::class, 'jadwalIndex'])->name('jadwal.index');
 Route::post('/perawatan/update/{id}', [TanamanController::class, 'updatePerawatan'])->name('perawatan.update');
