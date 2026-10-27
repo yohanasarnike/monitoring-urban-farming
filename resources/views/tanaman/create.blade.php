@@ -4,25 +4,55 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Input Data Tanaman</title>
+    <title>Input Data Tanaman - Urban Farming</title>
     <link rel="stylesheet" href="{{ asset('css/inputTanaman.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 
 <body>
 
-    <div class="main-container">
-        <div class="banner-header">
-            <h1 class="banner-title">Masukan<br>Data Tanaman Kamu</h1>
+    <!-- Navbar Atas Penuh -->
+     @if(isset($fromDashboard) && $fromDashboard)
+    <nav class="top-navbar">
+        <div class="nav-brand">Sistem Monitoring Urban Farming</div>
+        <div class="nav-menu">
+            <a href="{{ route('dashboard') }}" class="btn-nav-back">Kembali ke Dashboard</a>
+        </div>
+    </nav>
+    @endif
+
+    <!-- Layout Utama Dua Kolom (Split Screen) -->
+    <div class="split-container">
+        
+        <!-- Sisi Kiri: Banner & Foto Tanaman Estetik -->
+        <div class="split-left">
+            <div class="overlay-content">
+                <span class="badge-sub">Formulir Pertanian</span>
+                <h1 class="left-title">Masukkan<br>Data Tanaman</h1>
+                <p class="left-desc">
+                    Catat informasi awal tanaman dengan akurat untuk menghasilkan jadwal perawatan otomatis yang terstruktur dan berkelanjutan. 🌱
+                </p>
+            </div>
         </div>
 
-        <div class="form-content">
-            <form action="{{ url('/tanaman/tambah') }}" method="POST">
-                @csrf
+        <!-- Sisi Kanan: Kotak Form Input -->
+        <div class="split-right">
+            <div class="form-card-box-modern">
+                <h2 class="form-main-title">Input Data Tanaman</h2>
+                
+                <form action="{{ url('/tanaman/tambah') }}" method="POST">
+                    @csrf
 
-                <div class="form-card-box">
                     <div class="form-group">
-                        <label>Jenis Bibit</label>
-                        <input type="text" name="jenis_bibit" class="form-control" placeholder="contoh: Selada" required>
+                        <label for="jenis_bibit">Jenis Bibit</label>
+                        <select name="jenis_bibit" id="jenis_bibit" class="form-control" required>
+                            <option value="">-- Pilih Jenis Tanaman --</option>
+                            @foreach($daftarKriteria as $kriteria)
+                            <option value="{{ $kriteria->nama_tanaman }}" {{ old('jenis_bibit') == $kriteria->nama_tanaman ? 'selected' : '' }}>
+                                {{ $kriteria->nama_tanaman }}
+                            </option>
+                            @endforeach
+                        </select>
                     </div>
 
                     <div class="row-group">
@@ -46,9 +76,7 @@
                             <input type="text" name="kelembapan" class="form-control" placeholder="contoh: 80" required>
                         </div>
                     </div>
-                </div>
 
-                <div class="form-card-box">
                     <div class="row-group">
                         <div class="col-half">
                             <label>Jenis Lahan</label>
@@ -75,22 +103,23 @@
                         <label>Kondisi Tanaman</label>
                         <input type="text" name="kondisi_tanaman" class="form-control" placeholder="contoh: Sehat" required>
                     </div>
+
+                    <button type="submit" class="btn-submit">Simpan Data Tanaman</button>
+                </form>
+
+                @if ($errors->any())
+                <div class="alert-error">
+                    <strong>Periksa inputan berikut:</strong>
+                    <ul>
+                        @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
                 </div>
-
-                <button type="submit" class="btn-submit">Simpan Data</button>
-            </form>
-
-            @if ($errors->any())
-            <div style="background-color: #f8d7da; color: #721c24; padding: 12px; border-radius: 6px; margin-bottom: 20px; border: 1px solid #f5c6cb;">
-                <strong>Data gagal disimpan! Periksa inputan berikut:</strong>
-                <ul style="margin-top: 8px; margin-left: 20px;">
-                    @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
+                @endif
             </div>
-            @endif
         </div>
+
     </div>
 
 </body>

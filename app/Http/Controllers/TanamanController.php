@@ -14,9 +14,14 @@ class TanamanController extends Controller
 {
     public function create()
     {
-        return view('tanaman.create');
-    }
+        $daftarKriteria = \App\Models\KriteriaTanaman::all();
 
+        // Cek apakah halaman sebelumnya berasal dari dashboard
+        $previousUrl = url()->previous();
+        $fromDashboard = str_contains($previousUrl, '/dashboard');
+
+        return view('tanaman.create', compact('daftarKriteria', 'fromDashboard'));
+    }
     /**
      * Mengambil kriteria tanaman berdasarkan nama bibit.
      */
@@ -276,7 +281,7 @@ class TanamanController extends Controller
             );
         });
 
-        return redirect('/dahboard');
+        return redirect('/dashboard');
     }
 
     /**

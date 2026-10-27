@@ -15,7 +15,7 @@
 
     <!-- Navbar Web -->
     <div class="navbar">
-        <h2>🌿 Urban Farming Dashboard</h2>
+        <h2 style="">🌱 Selamat Datang, {{ Auth::user()->nama ?? Auth::user()->username }}!</h2>
         <div class="nav-links">
             <a href="/dashboard" class="active">Beranda</a>
             <a href="/notifikasi" class="notification-badge"><i class="fa-regular fa-bell"></i> Notifikasi</a>
