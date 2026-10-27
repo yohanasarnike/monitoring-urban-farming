@@ -2,48 +2,32 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Database\Factories\UserFactory;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
-    /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable;
+    use Notifiable;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var list<string>
-     */
+    protected $table = 'pemilik_tanaman';          // Nama tabel di database
+    protected $primaryKey = 'id_pemilik_tanaman';  // Primary key custom
+    
+    public $timestamps = false;                    // Jika tabel tidak punya kolom created_at/updated_at
+
     protected $fillable = [
-        'name',
+        'username',
         'email',
-        'password',
+        'PASSWORD',
+        'ROLE',
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var list<string>
-     */
     protected $hidden = [
-        'password',
-        'remember_token',
+        'PASSWORD',
     ];
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
-    protected function casts(): array
+    // Mengubah default nama kolom password bawaan Laravel (password) menjadi uppercase ('PASSWORD')
+    public function getAuthPassword()
     {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-        ];
+        return $this->PASSWORD;
     }
 }
