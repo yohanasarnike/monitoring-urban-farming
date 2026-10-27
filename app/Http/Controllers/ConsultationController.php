@@ -4,12 +4,22 @@ namespace App\Http\Controllers;
 
 use App\Models\Konsultasi;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Session;
 
 class ConsultationController extends Controller
 {
     public function index()
     {
-        $messages = Konsultasi::all();
+        // Ambil pesan konsultasi milik pengguna yang sedang login
+        $userId = Session::get('user_id');
+        
+        if ($userId) {
+            $messages = Konsultasi::where('id_pemilik_tanaman', $userId)->get();
+        } else {
+            $messages = Konsultasi::all();
+        }
+
         return view('konsultasi.chat', compact('messages'));
     }
 
@@ -20,15 +30,15 @@ class ConsultationController extends Controller
                 'message' => 'required|string',
             ]);
 
-            // Ambil ID pertama dari tabel pemilik_tanaman agar tidak melanggar Foreign Key Constraint
-            $idPemilik = \DB::table('pemilik_tanaman')->value('id_pemilik_tanaman') ?? 1;
+            // Ambil ID pemilik tanaman yang sedang login, fallback ke ID pertama jika tidak ada session
+            $idPemilik = Session::get('user_id') ?? DB::table('pemilik_tanaman')->value('id_pemilik_tanaman') ?? 1;
 
             $msg = Konsultasi::create([
-                'id_pemilik_tanaman'   => $idPemilik,
+                'id_pemilik_tanaman'    => $idPemilik,
                 'pertanyaan_konsultasi' => $request->message,
-                'jawaban_konsultasi'   => null,
-                'waktu_konsultasi'     => date('Y-m-d'), // Format DATE sesuai kolom di database
-                'status'               => 'Pending',
+                'jawaban_konsultasi'    => null,
+                'waktu_konsultasi'     => now(), // Menggunakan DATETIME saat ini (YYYY-MM-DD HH:MM:SS)
+                'status'                => 'Menunggu',
             ]);
 
             return response()->json([
@@ -36,6 +46,8 @@ class ConsultationController extends Controller
                 'data' => [
                     'id' => $msg->id_konsultasi,
                     'message' => $msg->pertanyaan_konsultasi,
+                    'waktu' => $msg->waktu_konsultasi,
+                    'status' => $msg->status,
                 ]
             ]);
         } catch (\Exception $e) {

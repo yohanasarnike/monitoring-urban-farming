@@ -17,7 +17,7 @@
     <!-- Header Chat Atas -->
     <div class="flex items-center justify-between pb-4 border-b border-gray-200">
         <div class="flex items-center gap-4">
-            <a href="/konsultasi" class="text-emerald-800 hover:text-emerald-950 transition">
+            <a href="/dashboard" class="text-emerald-800 hover:text-emerald-950 transition">
                 <i class="fa-solid fa-chevron-left text-2xl"></i>
             </a>
             <div class="w-12 h-12 rounded-full overflow-hidden bg-emerald-100 flex items-center justify-center shadow-sm border border-emerald-200">
@@ -43,7 +43,7 @@
 
         <!-- Render Pesan Lama dari Database -->
         @if(isset($messages))
-            @foreach($messages as$msg)
+            @foreach($messages as $msg)
                 @if(!empty($msg->pertanyaan_konsultasi))
                     <div class="flex items-start justify-end gap-3">
                         <div class="bg-[#045929] text-white p-4 md:p-5 rounded-3xl rounded-tr-none text-sm md:text-base leading-relaxed max-w-[85%] md:max-w-[60%] shadow-md">
@@ -98,7 +98,7 @@
 
                 const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
 
-                fetch("{{ route('konsultasi.send') }}", {
+                fetch("/konsultasi/send", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",

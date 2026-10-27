@@ -18,8 +18,14 @@
         <h2>🌿 Urban Farming Dashboard</h2>
         <div class="nav-links">
             <a href="/dashboard" class="active">Beranda</a>
-            <a href="#" class="notification-badge"><i class="fa-regular fa-bell"></i> Notifikasi</a>
-            <a href="#"><i class="fa-regular fa-user"></i> Profil</a>
+            <a href="/notifikasi" class="notification-badge"><i class="fa-regular fa-bell"></i> Notifikasi</a>
+            <a href="/profil"><i class="fa-regular fa-user"></i> Profil</a>
+            <form action="{{ route('logout') }}" method="POST" style="display: inline;">
+                @csrf
+                <button type="submit" style="background: none; border: none; color: inherit; font: inherit; cursor: pointer; padding: 0 10px;">
+                    <i class="fa-solid fa-right-from-bracket"></i> Keluar
+                </button>
+            </form>
         </div>
     </div>
 
@@ -42,15 +48,13 @@
 
         <!-- 3 Fitur Utama (Jadwal, Tambah tanaman, Konsultasi) -->
         <div class="features-grid">
-            <a href="{{ route('jadwal.index') }}" class="feature-card">
+            <a href="/jadwal-perawatan" class="feature-card">
                 <div class="feature-icon">
                     <i class="fa-regular fa-calendar-days"></i>
                 </div>
                 <h3>Jadwal Perawatan</h3>
                 <p>Kelola jadwal penyiraman, pemupukan, dan pemantauan harian tanaman.</p>
             </a>
-
-
 
             <a href="/tanaman/tambah" class="feature-card">
                 <div class="feature-icon">
@@ -60,7 +64,7 @@
                 <p>Tambahkan data tanaman baru, mulai dari jenis tanaman, tanggal tanam, hingga lokasi penanaman.</p>
             </a>
 
-            <a href="#" class="feature-card">
+            <a href="/konsultasi" class="feature-card">
                 <div class="feature-icon">
                     <i class="fa-regular fa-comments"></i>
                 </div>
