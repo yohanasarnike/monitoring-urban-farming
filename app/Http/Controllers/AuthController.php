@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use App\Models\Pemilik;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -9,11 +10,13 @@ use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
+    // Menampilkan halaman login
     public function showLogin()
     {
         return view('auth.login');
     }
 
+    // Proses login
     public function login(Request $request)
     {
         $credentials = $request->validate([
@@ -21,7 +24,7 @@ class AuthController extends Controller
             'password' => ['required', 'string'],
         ]);
 
-        if (Auth::guard('web')->attempt($credentials)) {
+        if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
 
             return redirect()->intended(route('dashboard'));
@@ -34,11 +37,13 @@ class AuthController extends Controller
             ->onlyInput('email');
     }
 
+    // Menampilkan halaman daftar akun
     public function showRegister()
     {
         return view('auth.register');
     }
 
+    // Proses pendaftaran akun
     public function register(Request $request)
     {
         $validated = $request->validate([
@@ -52,19 +57,21 @@ class AuthController extends Controller
             'password' => ['required', 'string', 'min:8'],
         ]);
 
-        $pemilik = Pemilik::create([
+        Pemilik::create([
             'username' => $validated['nama'],
             'email' => $validated['email'],
             'PASSWORD' => Hash::make($validated['password']),
             'ROLE' => 'pengguna',
         ]);
+
         return redirect()->route('login')
             ->with('success', 'Registrasi berhasil. Silakan masuk menggunakan akun yang baru saja kamu daftarkan');
     }
 
+    // Proses logout
     public function logout(Request $request)
     {
-        Auth::guard('web')->logout();
+        Auth::logout();
 
         $request->session()->invalidate();
         $request->session()->regenerateToken();
