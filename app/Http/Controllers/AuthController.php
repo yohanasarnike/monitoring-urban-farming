@@ -20,7 +20,7 @@ class AuthController extends Controller
             'email' => ['required', 'email'],
             'password' => ['required', 'string'],
         ]);
-
+        // memeriksa loginnya  
         if (Auth::guard('web')->attempt($credentials)) {
             $request->session()->regenerate();
 
