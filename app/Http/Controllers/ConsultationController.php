@@ -2,59 +2,42 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Konsultasi;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Session;
+use App\Models\Konsultasi;
+use Illuminate\Support\Facades\Auth;
 
 class ConsultationController extends Controller
 {
     public function index()
     {
-        // Ambil pesan konsultasi milik pengguna yang sedang login
-        $userId = Session::get('user_id');
-        
-        if ($userId) {
-            $messages = Konsultasi::where('id_pemilik_tanaman', $userId)->get();
-        } else {
-            $messages = Konsultasi::all();
-        }
+        $userId = Auth::user()->id_pemilik ?? Auth::id();
+
+        $messages = Konsultasi::where('id_pemilik_tanaman', $userId)
+            ->orderBy('id_konsultasi', 'asc')
+            ->get();
 
         return view('konsultasi.chat', compact('messages'));
     }
 
     public function store(Request $request)
     {
-        try {
-            $request->validate([
-                'message' => 'required|string',
-            ]);
+        $request->validate([
+            'message' => 'required|string',
+        ]);
 
-            // Ambil ID pemilik tanaman yang sedang login, fallback ke ID pertama jika tidak ada session
-            $idPemilik = Session::get('user_id') ?? DB::table('pemilik_tanaman')->value('id_pemilik_tanaman') ?? 1;
+        $userId = Auth::user()->id_pemilik ?? Auth::id();
 
-            $msg = Konsultasi::create([
-                'id_pemilik_tanaman'    => $idPemilik,
-                'pertanyaan_konsultasi' => $request->message,
-                'jawaban_konsultasi'    => null,
-                'waktu_konsultasi'     => now(), // Menggunakan DATETIME saat ini (YYYY-MM-DD HH:MM:SS)
-                'status'                => 'Menunggu',
-            ]);
+        $konsultasi = Konsultasi::create([
+            'id_pemilik_tanaman'    => $userId,
+            'pertanyaan_konsultasi' => $request->message,
+        ]);
 
-            return response()->json([
-                'status' => 'success',
-                'data' => [
-                    'id' => $msg->id_konsultasi,
-                    'message' => $msg->pertanyaan_konsultasi,
-                    'waktu' => $msg->waktu_konsultasi,
-                    'status' => $msg->status,
-                ]
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'status' => 'error',
-                'message' => $e->getMessage()
-            ], 500);
-        }
+        return response()->json([
+            'status'  => 'success',
+            'message' => 'Pesan berhasil dikirim',
+            'data'    => [
+                'message' => $konsultasi->pertanyaan_konsultasi
+            ]
+        ]);
     }
 }

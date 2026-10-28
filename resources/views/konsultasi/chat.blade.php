@@ -42,7 +42,7 @@
         </div>
 
         <!-- Render Pesan Lama dari Database -->
-        @if(isset($messages))
+        @if(isset($messages) && count($messages) > 0)
             @foreach($messages as $msg)
                 @if(!empty($msg->pertanyaan_konsultasi))
                     <div class="flex items-start justify-end gap-3">
@@ -122,8 +122,7 @@
                         messageInput.value = '';
                         chatContainer.scrollTop = chatContainer.scrollHeight;
                     } else {
-                        console.error('Gagal simpan:', data.message);
-                        alert('Gagal menyimpan pesan: ' + data.message);
+                        alert('Gagal menyimpan pesan: ' + (data.message || 'Terjadi kesalahan'));
                     }
                 })
                 .catch(error => console.error('Error AJAX:', error));
