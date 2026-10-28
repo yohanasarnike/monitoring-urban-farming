@@ -565,7 +565,28 @@
                     <!-- ========================================== -->
                     <div class="update-form-box">
                         <!-- BENAR -->
-                        <form action="{{ route('perawatan.update', $jadwal->getKey()) }}" method="POST">
+                        <form action="{{ route('perawatan.update', $jadwal->id_jadwal ?? 0) }}" method="POST">
+                            @csrf
+
+                            <input type="hidden"
+                                name="id_tanaman_ditanam"
+                                value="{{ $jadwal->id_tanaman_ditanam }}">
+
+                            <input type="hidden"
+                                name="tanggal_perawatan"
+                                value="{{ \Carbon\Carbon::parse($jadwal->tanggal_perawatan)->format('Y-m-d') }}">
+
+                            <input type="hidden"
+                                name="waktu_perawatan"
+                                value="{{ $jadwal->waktu_perawatan ?? '08:00:00' }}">
+
+                            <input type="hidden"
+                                name="jenis_pupuk"
+                                value="{{ $jadwal->jenis_pupuk ?? '-' }}">
+
+                            <input type="hidden"
+                                name="jadwal_keterangan"
+                                value="{{ $jadwal->keterangan ?? '' }}">
                             @csrf
                             <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 10px;">
                                 <!-- Input Suhu Aktual -->

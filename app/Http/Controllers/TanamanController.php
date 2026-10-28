@@ -7,23 +7,26 @@ use App\Models\Perawatan;
 use App\Models\KriteriaTanaman;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 class TanamanController extends Controller
 {
     public function create()
     {
-        $daftarKriteria = \App\Models\KriteriaTanaman::all();
+        $daftarKriteria = KriteriaTanaman::all();
 
-        // Cek apakah halaman sebelumnya berasal dari dashboard
         $previousUrl = url()->previous();
         $fromDashboard = str_contains($previousUrl, '/dashboard');
 
-        return view('tanaman.create', compact('daftarKriteria', 'fromDashboard'));
+        return view('tanaman.create', compact(
+            'daftarKriteria',
+            'fromDashboard'
+        ));
     }
+
     /**
-     * Mengambil kriteria tanaman berdasarkan nama bibit.
+     * Mengambil kriteria berdasarkan nama tanaman.
      */
     private function ambilKriteria($namaBibit)
     {
@@ -46,48 +49,36 @@ class TanamanController extends Controller
     }
 
     /**
-     * Membuat jadwal yang belum tersedia sampai masa panen.
-     * Jadwal lama tidak dihapus.
+     * Menghasilkan jadwal sementara.
+     * Fungsi ini TIDAK menyimpan jadwal ke database.
      */
-    private function generateJadwalTanaman($tanaman, $idPemilik)
+    private function generateJadwalTanaman($tanaman)
     {
         $kriteria = $this->ambilKriteria($tanaman->jenis_bibit);
 
-        // Jangan membuat jadwal dengan usia panen yang salah.
-        if (!$kriteria) {
-            return;
+        if (!$kriteria || (int) $kriteria->usia_panen <= 0) {
+            return collect();
         }
 
         $usiaPanen = (int) $kriteria->usia_panen;
 
-        if ($usiaPanen <= 0) {
-            return;
-        }
-
-        $suhuMin = (float) $kriteria->suhu_min;
-        $suhuMax = (float) $kriteria->suhu_max;
-        $pHMin = (float) $kriteria->pH_min;
-        $pHMax = (float) $kriteria->pH_max;
-
-        $suhuIdeal = ($suhuMin + $suhuMax) / 2;
-        $pHIdeal = ($pHMin + $pHMax) / 2;
-
-        $tinggiAwal = $tanaman->tinggi_awal ?? 5;
-
-        $tglTanam = Carbon::parse(
+        $tanggalTanam = Carbon::parse(
             $tanaman->tanggal_tanam
         )->startOfDay();
 
-        $idTanaman = $tanaman->id_tanaman_ditanam;
-
-        // Pastikan jadwal yang diperiksa milik tanaman dan pemilik yang sama.
-        $tanggalSudahAda = Perawatan::where(
+        // Ambil catatan yang benar-benar sudah disimpan.
+        $catatanTersimpan = Perawatan::where(
             'id_pemilik_tanaman',
-            $idPemilik
+            $tanaman->id_pemilik_tanaman
         )->where(
             'id_tanaman_ditanam',
-            $idTanaman
-        )->pluck('tanggal_perawatan')
+            $tanaman->id_tanaman_ditanam
+        )->get();
+
+        // Catatan aktual diprioritaskan daripada jadwal sementara.
+        $tanggalSudahDicatat = $catatanTersimpan
+            ->pluck('tanggal_perawatan')
+            ->filter()
             ->map(function ($tanggal) {
                 return Carbon::parse($tanggal)->format('Y-m-d');
             })
@@ -95,87 +86,115 @@ class TanamanController extends Controller
             ->values()
             ->all();
 
-        // Jadwal hari pertama.
-        $tanggalAwal = $tglTanam->format('Y-m-d');
+        $jadwal = collect();
 
-        if (!in_array($tanggalAwal, $tanggalSudahAda)) {
-            Perawatan::create([
-                'id_pemilik_tanaman' => $idPemilik,
-                'id_tanaman_ditanam' => $idTanaman,
-                'tanggal_perawatan' => $tanggalAwal,
-                'waktu_perawatan' => '07:30:00',
-                'suhu' => null,           // Biarkan kosong sebelum diisi user
-                'pH_tanaman' => null,     // Biarkan kosong sebelum diisi user
-                'jenis_pupuk' => null,
-                'kondisi' => 'Belum Dicek', // Ubah status awal jadi Belum Dicek
-                'tinggi_tanaman' => null, // Biarkan kosong sebelum diisi user
-                'kelembapan' => null,     // Biarkan kosong sebelum diisi user
-                'keterangan' => null,
-            ]);
-
-            $tanggalSudahAda[] = $tanggalAwal;
-        }
-
-        // Jadwal perawatan berkala sampai usia panen.
-        for ($hari = 2; $hari <= $usiaPanen; $hari++) {
-            $tanggal = $tglTanam->copy()->addDays($hari);
+        for ($hari = 0; $hari <= $usiaPanen; $hari++) {
+            $tanggal = $tanggalTanam->copy()->addDays($hari);
             $tanggalFormat = $tanggal->format('Y-m-d');
 
-            $penyiraman = ($hari % 2 === 0);
-            $pemupukan = ($hari % 7 === 0);
-            $panen = ($hari === $usiaPanen);
+            $penyiraman = $hari > 0 && $hari % 2 === 0;
+            $pemupukan = $hari > 0 && $hari % 7 === 0;
+            $panen = $hari === $usiaPanen;
 
-            if (!$penyiraman && !$pemupukan && !$panen) {
+            // Hari pertama sudah dicatat ketika tanaman ditambahkan.
+            // Jika sudah ada catatan pada tanggal ini, jangan membuat
+            // jadwal sementara duplikat untuk tanggal yang sama.
+            if (in_array($tanggalFormat, $tanggalSudahDicatat)) {
                 continue;
             }
 
-            // Jangan membuat jadwal baru jika tanggal tersebut
-            // sudah memiliki jadwal perawatan.
-            if (in_array($tanggalFormat, $tanggalSudahAda)) {
-                continue;
-            }
-
-            if ($panen) {
+            if ($hari === 0) {
+                $waktu = '07:30:00';
+                $jenisPupuk = null;
+                $kondisi = 'Belum Dicek';
+                $keterangan = 'Pemantauan awal tanaman '
+                    . $tanaman->jenis_bibit . '.';
+            } elseif ($panen) {
+                $waktu = '08:00:00';
                 $jenisPupuk = '-';
                 $kondisi = 'Siap Panen';
-                $waktu = '08:00:00';
-
-                $keterangan = "Puncak panen! {$tanaman->jenis_bibit} "
-                    . "siap dipanen sesuai usia panen {$usiaPanen} hari.";
+                $keterangan = 'Tanaman ' . $tanaman->jenis_bibit
+                    . ' diperkirakan siap dipanen pada hari ke-'
+                    . $usiaPanen . '.';
             } elseif ($pemupukan) {
+                $waktu = '09:00:00';
                 $jenisPupuk = 'Pupuk Organik Cair';
                 $kondisi = 'Belum Dicek (Terjadwal)';
-                $waktu = '09:00:00';
 
                 $keterangan = $penyiraman
-                    ? "Penyiraman dan pemupukan rutin {$tanaman->jenis_bibit} hari ke-{$hari}."
-                    : "Pemupukan rutin {$tanaman->jenis_bibit} hari ke-{$hari}.";
-            } else {
+                    ? 'Penyiraman dan pemupukan tanaman '
+                        . $tanaman->jenis_bibit
+                        . ' hari ke-' . $hari . '.'
+                    : 'Pemupukan tanaman '
+                        . $tanaman->jenis_bibit
+                        . ' hari ke-' . $hari . '.';
+            } elseif ($penyiraman) {
+                $waktu = '08:00:00';
                 $jenisPupuk = '-';
                 $kondisi = 'Belum Dicek (Terjadwal)';
-                $waktu = '08:00:00';
-
-                $keterangan = "Penyiraman rutin {$tanaman->jenis_bibit} hari ke-{$hari}.";
+                $keterangan = 'Penyiraman tanaman '
+                    . $tanaman->jenis_bibit
+                    . ' hari ke-' . $hari . '.';
+            } else {
+                continue;
             }
 
-            Perawatan::create([
-                'id_pemilik_tanaman' => $idPemilik,
-                'id_tanaman_ditanam' => $idTanaman,
+            // Objek ini hanya digunakan untuk tampilan.
+            // Tidak ada Perawatan::create() di bagian ini.
+            $jadwal->push((object) [
+                'id_jadwal' => null,
+                'id_pemilik_tanaman' => $tanaman->id_pemilik_tanaman,
+                'id_tanaman_ditanam' => $tanaman->id_tanaman_ditanam,
                 'tanggal_perawatan' => $tanggalFormat,
                 'waktu_perawatan' => $waktu,
-                'suhu' => $suhuIdeal,
-                'pH_tanaman' => $pHIdeal,
+                'suhu' => null,
+                'pH_tanaman' => null,
                 'jenis_pupuk' => $jenisPupuk,
                 'kondisi' => $kondisi,
-                'tinggi_tanaman' => $panen
-                    ? $tinggiAwal + 30
-                    : $tinggiAwal + ($hari * 0.2),
-                'kelembapan' => 80,
+                'tinggi_tanaman' => null,
+                'kelembapan' => null,
                 'keterangan' => $keterangan,
+                'catatan_harian' => null,
+                'status' => 'Pending',
+                'tanaman' => $tanaman,
             ]);
-
-            $tanggalSudahAda[] = $tanggalFormat;
         }
+
+        return $jadwal;
+    }
+
+    /**
+     * Menggabungkan jadwal sementara dan catatan aktual.
+     */
+    private function ambilSemuaJadwal($tanamanAktif, $idPemilik)
+    {
+        $hasil = collect();
+
+        foreach ($tanamanAktif as $tanaman) {
+            // Jadwal sementara yang belum memiliki catatan.
+            $hasil = $hasil->merge(
+                $this->generateJadwalTanaman($tanaman)
+            );
+
+            // Catatan aktual yang benar-benar tersimpan.
+            $catatan = Perawatan::with('tanaman')
+                ->where('id_pemilik_tanaman', $idPemilik)
+                ->where(
+                    'id_tanaman_ditanam',
+                    $tanaman->id_tanaman_ditanam
+                )
+                ->get();
+
+            $hasil = $hasil->merge($catatan);
+        }
+
+        return $hasil
+            ->sortBy(function ($item) {
+                return ($item->tanggal_perawatan ?? '9999-12-31')
+                    . ' '
+                    . ($item->waktu_perawatan ?? '00:00:00');
+            })
+            ->values();
     }
 
     /**
@@ -190,33 +209,28 @@ class TanamanController extends Controller
             $idPemilik
         )->get();
 
-        // 🟢 TAMBAHKAN INI: Jika user belum punya tanaman sama sekali, lempar ke halaman tambah tanaman!
         if ($tanamanAktif->isEmpty()) {
             return redirect('/tanaman/tambah')
-                ->with('info', 'Silakan tambahkan tanaman pertama kamu terlebih dahulu.');
+                ->with(
+                    'info',
+                    'Silakan tambahkan tanaman pertama kamu terlebih dahulu.'
+                );
         }
 
-        foreach ($tanamanAktif as $tanaman) {
-            $this->generateJadwalTanaman(
-                $tanaman,
-                $idPemilik
-            );
-        }
-
-        $jadwalPerawatan = Perawatan::with('tanaman')
-            ->where('id_pemilik_tanaman', $idPemilik)
-            ->orderBy('tanggal_perawatan', 'asc')
-            ->orderBy('waktu_perawatan', 'asc')
-            ->get();
-
-        return view(
-            'dashboard',
-            compact('tanamanAktif', 'jadwalPerawatan')
+        $jadwalPerawatan = $this->ambilSemuaJadwal(
+            $tanamanAktif,
+            $idPemilik
         );
+
+        return view('dashboard', compact(
+            'tanamanAktif',
+            'jadwalPerawatan'
+        ));
     }
 
     /**
-     * Menyimpan tanaman baru dan membuat jadwalnya.
+     * Menyimpan tanaman baru.
+     * Hanya catatan awal yang disimpan.
      */
     public function store(Request $request)
     {
@@ -235,15 +249,14 @@ class TanamanController extends Controller
 
         $idPemilik = Auth::id();
 
-        $kriteria = $this->ambilKriteria(
-            $request->jenis_bibit
-        );
+        $kriteria = $this->ambilKriteria($request->jenis_bibit);
 
         if (!$kriteria) {
             return back()
                 ->withInput()
                 ->withErrors([
-                    'jenis_bibit' => 'Kriteria tanaman tidak ditemukan. Periksa nama tanaman pada tabel kriteria tanaman.',
+                    'jenis_bibit' =>
+                        'Kriteria tanaman tidak ditemukan. Periksa nama tanaman pada tabel kriteria tanaman.',
                 ]);
         }
 
@@ -257,7 +270,7 @@ class TanamanController extends Controller
                 'lokasi_tanam' => $request->lokasi_tanam,
             ]);
 
-            // Simpan data perawatan hari pertama sesuai input pengguna.
+            // Simpan hanya catatan penanaman awal.
             Perawatan::create([
                 'id_pemilik_tanaman' => $idPemilik,
                 'id_tanaman_ditanam' => $tanaman->id_tanaman_ditanam,
@@ -271,21 +284,18 @@ class TanamanController extends Controller
                 'kondisi' => $request->kondisi_tanaman,
                 'tinggi_tanaman' => $request->tinggi_tanaman,
                 'kelembapan' => $request->kelembapan,
-                'keterangan' => "Penanaman awal {$request->jenis_bibit}.",
+                'keterangan' => 'Penanaman awal '
+                    . $request->jenis_bibit . '.',
+                'status' => 'Selesai',
             ]);
-
-            // Lengkapi jadwal sampai masa panen.
-            $this->generateJadwalTanaman(
-                $tanaman,
-                $idPemilik
-            );
         });
 
-        return redirect('/dashboard');
+        return redirect('/dashboard')
+            ->with('success', 'Tanaman berhasil ditambahkan.');
     }
 
     /**
-     * Halaman jadwal perawatan.
+     * Halaman kalender jadwal perawatan.
      */
     public function jadwalIndex(Request $request, $id = null)
     {
@@ -298,59 +308,36 @@ class TanamanController extends Controller
             $idPemilik
         )->get();
 
-        // Lengkapi jadwal tanaman lama yang masih belum lengkap.
-        foreach ($tanamanAktif as $tanaman) {
-            $this->generateJadwalTanaman(
-                $tanaman,
-                $idPemilik
-            );
-        }
-
         $daftarTanaman = $tanamanAktif;
-
-        $query = Perawatan::with('tanaman')
-            ->where('id_pemilik_tanaman', $idPemilik);
-
-        if ($id) {
-            $query->where(
-                'id_tanaman_ditanam',
-                $id
-            );
-        }
-
-        if ($request->filled('tanggal')) {
-            $query->whereDate(
-                'tanggal_perawatan',
-                $request->tanggal
-            );
-        }
-
         $tanamanPilih = null;
 
         if ($id) {
-            $tanamanPilih = TanamanDitanam::where(
-                'id_pemilik_tanaman',
-                $idPemilik
-            )->where(
+            $tanamanPilih = $tanamanAktif->firstWhere(
                 'id_tanaman_ditanam',
-                $id
-            )->first();
+                (int) $id
+            );
+
+            // Jangan mengizinkan filter tanaman milik pengguna lain.
+            if (!$tanamanPilih) {
+                abort(404);
+            }
         }
 
-        $queryTanggal = Perawatan::where(
-            'id_pemilik_tanaman',
+        $tanamanUntukJadwal = $id
+            ? $tanamanAktif->where(
+                'id_tanaman_ditanam',
+                (int) $id
+            )
+            : $tanamanAktif;
+
+        $semuaJadwal = $this->ambilSemuaJadwal(
+            $tanamanUntukJadwal,
             $idPemilik
         );
 
-        if ($id) {
-            $queryTanggal->where(
-                'id_tanaman_ditanam',
-                $id
-            );
-        }
-
-        $tanggalAdaJadwal = $queryTanggal
+        $tanggalAdaJadwal = $semuaJadwal
             ->pluck('tanggal_perawatan')
+            ->filter()
             ->map(function ($tanggal) {
                 return Carbon::parse($tanggal)->format('Y-m-d');
             })
@@ -358,10 +345,17 @@ class TanamanController extends Controller
             ->values()
             ->toArray();
 
-        $jadwalPerawatan = $query
-            ->orderBy('tanggal_perawatan', 'asc')
-            ->orderBy('waktu_perawatan', 'asc')
-            ->get();
+        if ($request->filled('tanggal')) {
+            $semuaJadwal = $semuaJadwal
+                ->filter(function ($jadwal) use ($request) {
+                    return Carbon::parse(
+                        $jadwal->tanggal_perawatan
+                    )->format('Y-m-d') === $request->tanggal;
+                })
+                ->values();
+        }
+
+        $jadwalPerawatan = $semuaJadwal;
 
         return view('jadwal.index', compact(
             'jadwalPerawatan',
@@ -374,39 +368,95 @@ class TanamanController extends Controller
     }
 
     /**
-     * Memperbarui status, tinggi, dan catatan harian perawatan tanaman.
+     * Menyimpan atau memperbarui catatan perawatan.
+     *
+     * ID 0 berarti jadwal sementara yang belum tersimpan.
      */
     public function updatePerawatan(Request $request, $id)
     {
-        // Langsung pakai findOrFail($id) agar Laravel menyesuaikan primary key tabel otomatis
-        $perawatan = Perawatan::findOrFail($id);
+        $request->validate([
+            'id_tanaman_ditanam' => 'required|integer',
+            'tanggal_perawatan' => 'required|date',
+            'suhu' => 'nullable|numeric',
+            'pH_tanaman' => 'nullable|numeric',
+            'tinggi_tanaman' => 'nullable|numeric',
+            'kelembapan' => 'nullable|numeric',
+            'kondisi' => 'nullable|string|max:100',
+            'catatan_harian' => 'nullable|string',
+            'status' => 'nullable|in:Selesai',
+        ]);
 
-        // Timpa dengan data aktual dari input user
+        $idPemilik = Auth::id();
+
+        // Pastikan tanaman memang milik pengguna yang sedang login.
+        $tanaman = TanamanDitanam::where(
+            'id_tanaman_ditanam',
+            $request->id_tanaman_ditanam
+        )->where(
+            'id_pemilik_tanaman',
+            $idPemilik
+        )->firstOrFail();
+
+        if ((int) $id > 0) {
+            // Perbarui catatan yang sudah tersimpan.
+            $perawatan = Perawatan::where(
+                'id_jadwal',
+                $id
+            )->where(
+                'id_pemilik_tanaman',
+                $idPemilik
+            )->where(
+                'id_tanaman_ditanam',
+                $tanaman->id_tanaman_ditanam
+            )->firstOrFail();
+        } else {
+            // Jadwal sementara baru dibuat menjadi catatan saat disimpan.
+            $perawatan = Perawatan::firstOrNew([
+                'id_pemilik_tanaman' => $idPemilik,
+                'id_tanaman_ditanam' => $tanaman->id_tanaman_ditanam,
+                'tanggal_perawatan' => Carbon::parse(
+                    $request->tanggal_perawatan
+                )->format('Y-m-d'),
+            ]);
+
+            if (!$perawatan->exists) {
+                $perawatan->waktu_perawatan = '08:00:00';
+            }
+        }
+
+        if ($request->filled('suhu')) {
+            $perawatan->suhu = $request->suhu;
+        }
+
+        if ($request->filled('pH_tanaman')) {
+            $perawatan->pH_tanaman = $request->pH_tanaman;
+        }
+
+        if ($request->filled('tinggi_tanaman')) {
+            $perawatan->tinggi_tanaman = $request->tinggi_tanaman;
+        }
+
+        if ($request->filled('kondisi')) {
+            $perawatan->kondisi = $request->kondisi;
+        }
+
         if ($request->has('status')) {
             $perawatan->status = 'Selesai';
         } else {
             $perawatan->status = 'Pending';
         }
 
-        if ($request->filled('suhu')) {
-            $perawatan->suhu = $request->suhu;
-        }
-        if ($request->filled('pH_tanaman')) {
-            $perawatan->pH_tanaman = $request->pH_tanaman;
-        }
-        if ($request->filled('tinggi_tanaman')) {
-            $perawatan->tinggi_tanaman = $request->tinggi_tanaman;
-        }
-        if ($request->filled('kondisi')) {
-            $perawatan->kondisi = $request->kondisi;
-        }
         if ($request->filled('catatan_harian')) {
-            $perawatan->catatan_harian = $request->catatan_harian;
-            $perawatan->keterangan = "Update Pengguna: " . $request->catatan_harian;
+            // Catatan disimpan di kolom keterangan karena struktur
+            // tabel yang diberikan tidak memiliki kolom catatan_harian.
+            $perawatan->keterangan = $request->catatan_harian;
         }
 
         $perawatan->save();
 
-        return redirect()->back()->with('success', 'Data perawatan berhasil diperbarui!');
+        return redirect()->back()->with(
+            'success',
+            'Data perawatan berhasil diperbarui!'
+        );
     }
 }
