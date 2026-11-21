@@ -394,7 +394,6 @@
         .schedule-item.completed-item .schedule-details h4 {
             color: #166534;
             text-decoration: line-through;
-            /* Coret tipis judul kalau sudah selesai (opsional) */
         }
     </style>
 </head>
@@ -404,7 +403,8 @@
     <!-- Navbar -->
     <div class="navbar">
         <h2>Sistem Monitoring Urban Farming</h2>
-        <a href="{{ url('/dashboard') }}"><i class="fa-solid fa-arrow-left"></i> Kembali ke Dashboard</a>
+        <!-- Menggunakan url()->previous() agar dinamis kembali ke halaman sebelumnya (Notifikasi/Dashboard) -->
+        <a href="{{ url()->previous() }}"><i class="fa-solid fa-arrow-left"></i> Kembali</a>
     </div>
 
     <!-- Main Container -->
@@ -452,175 +452,163 @@
                     @endphp
 
                     @for ($i = 1; $i < $firstDayOfWeek; $i++)
-                        <div class="calendar-date other-month">
-                </div>
-                @endfor
+                        <div class="calendar-date other-month"></div>
+                    @endfor
 
-                @for ($day = 1; $day <= $daysInMonth; $day++)
+                    @for ($day = 1; $day <= $daysInMonth; $day++)
+                        @php
+                        $currentLoopDate=$currentCalendarDate->copy()->setDate($year, $month, $day)->format('Y-m-d');
+                        $isActive = ($selectedDate == $currentLoopDate);
+                        $hasEvent = in_array($currentLoopDate, $tanggalAdaJadwal ?? []);
+                        @endphp
+
+                        <a href="{{ route('jadwal.index', array_merge(request()->all(), ['tanggal' => $currentLoopDate])) }}"
+                            class="calendar-date {{ $isActive ? 'active' : '' }}">
+                            <span>{{ $day }}</span>
+                            @if($hasEvent)
+                            <span class="event-dot"></span>
+                            @endif
+                        </a>
+                    @endfor
+                </div>
+
+                <!-- Filter Berdasarkan Tanaman -->
+                <div class="filter-section">
+                    <h4>🌱 Filter Berdasarkan Tanaman</h4>
+                    <div class="plant-pill-list">
+                        <a href="{{ route('jadwal.index', array_merge(request()->except('id'), ['id' => null])) }}"
+                            class="plant-pill {{ !request('id') ? 'active' : '' }}">
+                            Semua Tanaman
+                        </a>
+                        @foreach($daftarTanaman as $tanaman)
+                        <a href="{{ route('jadwal.index', array_merge(request()->all(), ['id' => $tanaman->id_tanaman_ditanam])) }}"
+                            class="plant-pill {{ request('id') == $tanaman->id_tanaman_ditanam ? 'active' : '' }}">
+                            {{ $tanaman->jenis_bibit }}
+                        </a>
+                        @endforeach
+                    </div>
+                </div>
+            </div>
+
+            <!-- Kolom Kanan: Daftar Jadwal & Form Update Harian -->
+            <div class="schedule-card-container">
+                <div class="schedule-card-header">
+                    <div>
+                        <h3>Aktivitas Perawatan</h3>
+                        <p style="font-size: 13px; color: #666; margin-top: 4px;">
+                            @if(request('tanggal'))
+                            Menampilkan jadwal untuk tanggal: <b>{{ \Carbon\Carbon::parse(request('tanggal'))->translatedFormat('d F Y') }}</b>
+                            @else
+                            Menampilkan seluruh jadwal perawatan (Klik tanggal di kalender untuk memfilter).
+                            @endif
+                        </p>
+                    </div>
+                    @if(request('tanggal') || request('id') || request('month'))
+                    <a href="{{ route('jadwal.index') }}" style="font-size: 12px; color: #e76f51; text-decoration: none; font-weight: 600;">
+                        <i class="fa-solid fa-rotate-right"></i> Reset Filter
+                    </a>
+                    @endif
+                </div>
+
+                <div class="schedule-list">
+                    @forelse($jadwalPerawatan as $jadwal)
                     @php
-                    $currentLoopDate=$currentCalendarDate->copy()->setDate($year, $month, $day)->format('Y-m-d');
-                    $isActive = ($selectedDate == $currentLoopDate);
-                    $hasEvent = in_array($currentLoopDate, $tanggalAdaJadwal ?? []);
+                    $tipeKelas = 'watering';
+                    $iconClass = 'fa-droplet';
+                    if(!empty($jadwal->jenis_pupuk) && $jadwal->jenis_pupuk !== '-') {
+                    $tipeKelas = 'fertilizer';
+                    $iconClass = 'fa-bottle-droplet';
+                    }
+                    if($jadwal->kondisi == 'Siap Panen') {
+                    $tipeKelas = 'harvest';
+                    $iconClass = 'fa-basket-shopping';
+                    }
                     @endphp
 
-                    <a href="{{ route('jadwal.index', array_merge(request()->all(), ['tanggal' => $currentLoopDate])) }}"
-                        class="calendar-date {{ $isActive ? 'active' : '' }}">
-                        <span>{{ $day }}</span>
-                        @if($hasEvent)
-                        <span class="event-dot"></span>
-                        @endif
-                    </a>
-                    @endfor
-            </div>
-
-            <!-- Filter Berdasarkan Tanaman -->
-            <div class="filter-section">
-                <h4>🌱 Filter Berdasarkan Tanaman</h4>
-                <div class="plant-pill-list">
-                    <a href="{{ route('jadwal.index', array_merge(request()->except('id'), ['id' => null])) }}"
-                        class="plant-pill {{ !request('id') ? 'active' : '' }}">
-                        Semua Tanaman
-                    </a>
-                    @foreach($daftarTanaman as $tanaman)
-                    <a href="{{ route('jadwal.index', array_merge(request()->all(), ['id' => $tanaman->id_tanaman_ditanam])) }}"
-                        class="plant-pill {{ request('id') == $tanaman->id_tanaman_ditanam ? 'active' : '' }}">
-                        {{ $tanaman->jenis_bibit }}
-                    </a>
-                    @endforeach
-                </div>
-            </div>
-        </div>
-
-        <!-- Kolom Kanan: Daftar Jadwal & Form Update Harian -->
-        <div class="schedule-card-container">
-            <div class="schedule-card-header">
-                <div>
-                    <h3>Aktivitas Perawatan</h3>
-                    <p style="font-size: 13px; color: #666; margin-top: 4px;">
-                        @if(request('tanggal'))
-                        Menampilkan jadwal untuk tanggal: <b>{{ \Carbon\Carbon::parse(request('tanggal'))->translatedFormat('d F Y') }}</b>
-                        @else
-                        Menampilkan seluruh jadwal perawatan (Klik tanggal di kalender untuk memfilter).
-                        @endif
-                    </p>
-                </div>
-                @if(request('tanggal') || request('id') || request('month'))
-                <a href="{{ route('jadwal.index') }}" style="font-size: 12px; color: #e76f51; text-decoration: none; font-weight: 600;">
-                    <i class="fa-solid fa-rotate-right"></i> Reset Filter
-                </a>
-                @endif
-            </div>
-
-            <div class="schedule-list">
-                @forelse($jadwalPerawatan as $jadwal)
-                @php
-                $tipeKelas = 'watering';
-                $iconClass = 'fa-droplet';
-                if(!empty($jadwal->jenis_pupuk) && $jadwal->jenis_pupuk !== '-') {
-                $tipeKelas = 'fertilizer';
-                $iconClass = 'fa-bottle-droplet';
-                }
-                if($jadwal->kondisi == 'Siap Panen') {
-                $tipeKelas = 'harvest';
-                $iconClass = 'fa-basket-shopping';
-                }
-                @endphp
-
-                <div class="schedule-item {{ $tipeKelas }} {{ $jadwal->status == 'Selesai' ? 'completed-item' : '' }}">
-                    <div class="schedule-top-info">
-                        <div class="schedule-left">
-                            <div class="schedule-icon">
-                                <i class="fa-solid {{ $iconClass }}"></i>
+                    <div class="schedule-item {{ $tipeKelas }} {{ $jadwal->status == 'Selesai' ? 'completed-item' : '' }}">
+                        <div class="schedule-top-info">
+                            <div class="schedule-left">
+                                <div class="schedule-icon">
+                                    <i class="fa-solid {{ $iconClass }}"></i>
+                                </div>
+                                <div class="schedule-details">
+                                    <h4>{{ $jadwal->keterangan }}</h4>
+                                    <p>
+                                        Tanaman: <b>{{ optional($jadwal->tanaman)->jenis_bibit ?? 'Tanaman' }}</b>
+                                        @if($jadwal->suhu && $jadwal->status == 'Selesai')
+                                        | Suhu: {{ $jadwal->suhu }}°C | pH: {{ $jadwal->pH_tanaman }} | Kelembapan: {{ $jadwal->kelembapan }}%
+                                        @else
+                                        | <span style="color: #e76f51; font-style: italic;">Belum diupdate (Menunggu input pengguna)</span>
+                                        @endif
+                                    </p>
+                                </div>
                             </div>
-                            <div class="schedule-details">
-                                <h4>{{ $jadwal->keterangan }}</h4>
-                                <p>
-                                    Tanaman: <b>{{ optional($jadwal->tanaman)->jenis_bibit ?? 'Tanaman' }}</b>
-                                    @if($jadwal->suhu && $jadwal->status == 'Selesai')
-                                    | Suhu: {{ $jadwal->suhu }}°C | pH: {{ $jadwal->pH_tanaman }} | Kelembapan: {{ $jadwal->kelembapan }}%
-                                    @else
-                                    | <span style="color: #e76f51; font-style: italic;">Belum diupdate (Menunggu input pengguna)</span>
-                                    @endif
-                                </p>
+
+                            @if($jadwal->status == 'Selesai')
+                            <span style="background: #dcfce7; color: #166534; padding: 3px 8px; font-size: 11px; font-weight: 600; border-radius: 6px;">
+                                <i class="fa-solid fa-check-circle"></i> Selesai
+                            </span>
+                            @else
+                            <span style="background: #fef9c3; color: #854d0e; padding: 3px 8px; font-size: 11px; font-weight: 600; border-radius: 6px;">
+                                Pending
+                            </span>
+                            @endif
+                            <div class="schedule-right">
+                                <div class="schedule-time">⏰ {{ $jadwal->waktu_perawatan ?? '08:00' }}</div>
+                                <div class="schedule-date">🗓️ {{ \Carbon\Carbon::parse($jadwal->tanggal_perawatan)->format('d M Y') }}</div>
                             </div>
                         </div>
 
-                        @if($jadwal->status == 'Selesai')
-                        <span style="background: #dcfce7; color: #166534; padding: 3px 8px; font-size: 11px; font-weight: 600; border-radius: 6px;">
-                            <i class="fa-solid fa-check-circle"></i> Selesai
-                        </span>
-                        @else
-                        <span style="background: #fef9c3; color: #854d0e; padding: 3px 8px; font-size: 11px; font-weight: 600; border-radius: 6px;">
-                            Pending
-                        </span>
-                        @endif
-                        <div class="schedule-right">
-                            <div class="schedule-time">⏰ {{ $jadwal->waktu_perawatan ?? '08:00' }}</div>
-                            <div class="schedule-date">🗓️ {{ \Carbon\Carbon::parse($jadwal->tanggal_perawatan)->format('d M Y') }}</div>
+                        <!-- FORM UPDATE HARIAN -->
+                        <div class="update-form-box">
+                            <form action="{{ route('perawatan.update', $jadwal->getKey()) }}" method="POST">
+                                @csrf
+                                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 10px;">
+                                    <div>
+                                        <label style="font-size: 11px; font-weight: 600;">Suhu (°C):</label>
+                                        <input type="number" step="0.1" name="suhu" class="form-control-sm-custom" value="{{ $jadwal->suhu }}">
+                                    </div>
+                                    <div>
+                                        <label style="font-size: 11px; font-weight: 600;">pH Tanah:</label>
+                                        <input type="number" step="0.1" name="pH_tanaman" class="form-control-sm-custom" value="{{ $jadwal->pH_tanaman }}">
+                                    </div>
+                                    <div>
+                                        <label style="font-size: 11px; font-weight: 600;">Tinggi (cm):</label>
+                                        <input type="number" step="0.1" name="tinggi_tanaman" class="form-control-sm-custom" value="{{ $jadwal->tinggi_tanaman }}">
+                                    </div>
+                                    <div>
+                                        <label style="font-size: 11px; font-weight: 600;">Kondisi:</label>
+                                        <select name="kondisi" class="form-control-sm-custom">
+                                            <option value="Sehat" {{ $jadwal->kondisi == 'Sehat' ? 'selected' : '' }}>Sehat</option>
+                                            <option value="Terkena Hama" {{ $jadwal->kondisi == 'Terkena Hama' ? 'selected' : '' }}>Terkena Hama</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div style="margin-bottom: 10px;">
+                                    <label style="font-size: 11px; font-weight: 600;">Catatan / Keterangan:</label>
+                                    <input type="text" name="catatan_harian" class="form-control-sm-custom" value="{{ $jadwal->catatan_harian }}" placeholder="Misal: Sudah disiram dan diberi pupuk tambahan...">
+                                </div>
+
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <label style="font-size: 12px; font-weight: 500; color: #2d6a4f; cursor: pointer;">
+                                        <input type="checkbox" name="status" value="Selesai" {{ $jadwal->status == 'Selesai' ? 'checked' : '' }}> Selesai Dikerjakan
+                                    </label>
+                                    <button type="submit" class="btn-save-update">Simpan Update</button>
+                                </div>
+                            </form>
                         </div>
                     </div>
-
-                    <!-- ========================================== -->
-                    <!-- FORM UPDATE HARIAN & CHECKLIST STATUS      -->
-                    <!-- ========================================== -->
-                    <div class="update-form-box">
-                        <!-- BENAR -->
-                        <form action="{{ route('perawatan.update', $jadwal->getKey()) }}" method="POST">
-                            @csrf
-                            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 10px;">
-                                <!-- Input Suhu Aktual -->
-                                <div>
-                                    <label style="font-size: 11px; font-weight: 600;">Suhu (°C):</label>
-                                    <input type="number" step="0.1" name="suhu" class="form-control-sm-custom" value="{{ $jadwal->suhu }}">
-                                </div>
-                                <!-- Input pH Aktual -->
-                                <div>
-                                    <label style="font-size: 11px; font-weight: 600;">pH Tanah:</label>
-                                    <input type="number" step="0.1" name="pH_tanaman" class="form-control-sm-custom" value="{{ $jadwal->pH_tanaman }}">
-                                </div>
-                                <!-- Input Tinggi Tanaman Aktual -->
-                                <div>
-                                    <label style="font-size: 11px; font-weight: 600;">Tinggi (cm):</label>
-                                    <input type="number" step="0.1" name="tinggi_tanaman" class="form-control-sm-custom" value="{{ $jadwal->tinggi_tanaman }}">
-                                </div>
-                                <!-- Pilih Kondisi Aktual -->
-                                <div>
-                                    <label style="font-size: 11px; font-weight: 600;">Kondisi:</label>
-                                    <select name="kondisi" class="form-control-sm-custom">
-                                        <option value="Sehat" {{ $jadwal->kondisi == 'Sehat' ? 'selected' : '' }}>Sehat</option>
-                                        <option value="Terkena Hama" {{ $jadwal->kondisi == 'Terkena Hama' ? 'selected' : '' }}>Terkena Hama</option>
-                                    </select>
-                                </div>
-                            </div>
-
-                            <!-- Catatan Harian / Keterangan -->
-                            <div style="margin-bottom: 10px;">
-                                <label style="font-size: 11px; font-weight: 600;">Catatan / Keterangan:</label>
-                                <input type="text" name="catatan_harian" class="form-control-sm-custom" value="{{ $jadwal->catatan_harian }}" placeholder="Misal: Sudah disiram dan diberi pupuk tambahan...">
-                            </div>
-
-                            <div style="display: flex; justify-content: space-between; align-items: center;">
-                                <label style="font-size: 12px; font-weight: 500; color: #2d6a4f; cursor: pointer;">
-                                    <input type="checkbox" name="status" value="Selesai" {{ $jadwal->status == 'Selesai' ? 'checked' : '' }}> Selesai Dikerjakan
-                                </label>
-                                <button type="submit" class="btn-save-update">Simpan Update</button>
-                            </div>
-                        </form>
-
+                    @empty
+                    <div class="empty-state">
+                        <i class="fa-solid fa-calendar-xmark" style="font-size: 40px; color: #52b788; margin-bottom: 12px;"></i>
+                        <p>Tidak ada jadwal perawatan pada tanggal atau filter yang dipilih.</p>
                     </div>
-                    <!-- END FORM UPDATE -->
-
+                    @endforelse
                 </div>
-                @empty
-                <div class="empty-state">
-                    <i class="fa-solid fa-calendar-xmark" style="font-size: 40px; color: #52b788; margin-bottom: 12px;"></i>
-                    <p>Tidak ada jadwal perawatan pada tanggal atau filter yang dipilih.</p>
-                </div>
-                @endforelse
             </div>
-        </div>
 
-    </div>
+        </div>
     </div>
 
 </body>

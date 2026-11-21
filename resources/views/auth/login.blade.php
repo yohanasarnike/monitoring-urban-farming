@@ -446,7 +446,7 @@
                 <!-- input password End -->
 
                 <!-- lupa password start -->
-                <a href="#" class="forgot-link">Lupa password?</a>
+                <a href="{{ route('password.request') }}" class="forgot-link">Lupa password?</a>
 
                 <!-- buttono login -->
                 <button type="submit" class="btn-login">Login</button>
