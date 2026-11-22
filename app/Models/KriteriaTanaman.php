@@ -9,4 +9,13 @@ class KriteriaTanaman extends Model
     protected $primaryKey = 'id_tanaman';
     public $timestamps = false;
     protected $guarded = [];
+
+    protected $fillable = [
+        'nama_tanaman',
+        'usia_panen',
+        'pH_min',
+        'pH_max',
+        'suhu_min',
+        'suhu_max',
+    ];
 }

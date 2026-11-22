@@ -1,10 +1,12 @@
 <?php
 
+use App\Http\Controllers\Admin\DashboardController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ConsultationController;
 use App\Http\Controllers\TanamanController;
 use App\Http\Controllers\DashboardSistem;
+
 
 // Redirect utama ke login
 Route::get('/', function () {
@@ -62,3 +64,23 @@ Route::get('/dashboard', [TanamanController::class, 'index'])->name('dashboard')
 //jadwal perawatan
 Route::get('/jadwal-perawatan', [TanamanController::class, 'jadwalIndex'])->name('jadwal.index');
 Route::post('/perawatan/update/{id}', [TanamanController::class, 'updatePerawatan'])->name('perawatan.update');
+
+
+
+//dashboard admin
+Route::middleware(['auth'])->group(function () {
+    Route::get('/admin/dashboard', [DashboardController::class, 'index'])
+        ->name('admin.dashboard');
+//kelola data tanaman
+    Route::get('/kelola-data', [DashboardController::class, 'kelolaData'])
+        ->name('admin.kelola-data');
+
+    Route::post('/admin/kelola-data', [DashboardController::class, 'storeKriteria'])
+        ->name('admin.kelola-data.store');
+
+    Route::put('/admin/kelola-data/{id}', [DashboardController::class, 'updateKriteria'])
+        ->name('admin.kelola-data.update');
+
+    Route::delete('/admin/kelola-data/{id}', [DashboardController::class, 'destroyKriteria'])
+        ->name('admin.kelola-data.destroy');
+});

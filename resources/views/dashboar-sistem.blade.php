@@ -241,7 +241,7 @@
             <h1>Monitoring Urban Farming</h1>
 
             <p class="description">
-                Pantau dan kelola pertumbuhan tanaman kamu,
+                Pantau dan kelola pertumbuhan tanaman kamu
                 dengan lebih mudah dan efisien😊
             </p>
         </div>
