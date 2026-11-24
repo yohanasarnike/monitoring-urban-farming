@@ -315,27 +315,6 @@
             border-top: 1px dashed #d8e2dc;
         }
 
-        .form-row-custom {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 10px;
-            margin-bottom: 10px;
-        }
-
-        @media (max-width: 768px) {
-            .form-row-custom {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .form-group-custom label {
-            font-size: 11px;
-            font-weight: 600;
-            color: #444;
-            display: block;
-            margin-bottom: 3px;
-        }
-
         .form-control-sm-custom {
             width: 100%;
             padding: 6px 10px;
@@ -343,24 +322,6 @@
             border: 1px solid #cbd5e1;
             border-radius: 8px;
             background: #fff;
-        }
-
-        .form-textarea-custom {
-            width: 100%;
-            padding: 6px 10px;
-            font-size: 12px;
-            border: 1px solid #cbd5e1;
-            border-radius: 8px;
-            background: #fff;
-            resize: vertical;
-            height: 38px;
-        }
-
-        .form-footer-action {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 8px;
         }
 
         .btn-save-update {
@@ -403,7 +364,6 @@
     <!-- Navbar -->
     <div class="navbar">
         <h2>Sistem Monitoring Urban Farming</h2>
-        <!-- Menggunakan url()->previous() agar dinamis kembali ke halaman sebelumnya (Notifikasi/Dashboard) -->
         <a href="{{ url('/dashboard') }}"><i class="fa-solid fa-arrow-left"></i> Kembali ke dashboard</a>
     </div>
 
@@ -457,7 +417,7 @@
 
                     @for ($day = 1; $day <= $daysInMonth; $day++)
                         @php
-                        $currentLoopDate=$currentCalendarDate->copy()->setDate($year, $month, $day)->format('Y-m-d');
+                        $currentLoopDate = $currentCalendarDate->copy()->setDate($year, $month, $day)->format('Y-m-d');
                         $isActive = ($selectedDate == $currentLoopDate);
                         $hasEvent = in_array($currentLoopDate, $tanggalAdaJadwal ?? []);
                         @endphp
@@ -490,6 +450,7 @@
                 </div>
             </div>
 
+
             <!-- Kolom Kanan: Daftar Jadwal & Form Update Harian -->
             <div class="schedule-card-container">
                 <div class="schedule-card-header">
@@ -509,19 +470,21 @@
                     </a>
                     @endif
                 </div>
+                
 
+                
                 <div class="schedule-list">
                     @forelse($jadwalPerawatan as $jadwal)
                     @php
                     $tipeKelas = 'watering';
                     $iconClass = 'fa-droplet';
                     if(!empty($jadwal->jenis_pupuk) && $jadwal->jenis_pupuk !== '-') {
-                    $tipeKelas = 'fertilizer';
-                    $iconClass = 'fa-bottle-droplet';
+                        $tipeKelas = 'fertilizer';
+                        $iconClass = 'fa-bottle-droplet';
                     }
                     if($jadwal->kondisi == 'Siap Panen') {
-                    $tipeKelas = 'harvest';
-                    $iconClass = 'fa-basket-shopping';
+                        $tipeKelas = 'harvest';
+                        $iconClass = 'fa-basket-shopping';
                     }
                     @endphp
 
@@ -553,81 +516,60 @@
                                 Pending
                             </span>
                             @endif
+
                             <div class="schedule-right">
                                 <div class="schedule-time">⏰ {{ $jadwal->waktu_perawatan ?? '08:00' }}</div>
                                 <div class="schedule-date">🗓️ {{ \Carbon\Carbon::parse($jadwal->tanggal_perawatan)->format('d M Y') }}</div>
                             </div>
                         </div>
 
+                        <!-- FORM UPDATE HARIAN & CHECKLIST STATUS -->
+                        <div class="update-form-box">
+                            <form action="{{ route('perawatan.update', $jadwal->id_jadwal ?? 0) }}" method="POST">
+                                @csrf
 
-                    <!-- ========================================== -->
-                    <!-- FORM UPDATE HARIAN & CHECKLIST STATUS      -->
-                    <!-- ========================================== -->
-                    <div class="update-form-box">
-                        <!-- BENAR -->
-                        <form action="{{ route('perawatan.update', $jadwal->id_jadwal ?? 0) }}" method="POST">
-                            @csrf
+                                <input type="hidden" name="id_tanaman_ditanam" value="{{ $jadwal->id_tanaman_ditanam }}">
+                                <input type="hidden" name="tanggal_perawatan" value="{{ \Carbon\Carbon::parse($jadwal->tanggal_perawatan)->format('Y-m-d') }}">
+                                <input type="hidden" name="waktu_perawatan" value="{{ $jadwal->waktu_perawatan ?? '08:00:00' }}">
+                                <input type="hidden" name="jenis_pupuk" value="{{ $jadwal->jenis_pupuk ?? '-' }}">
+                                <input type="hidden" name="jadwal_keterangan" value="{{ $jadwal->keterangan ?? '' }}">
 
-                            <input type="hidden"
-                                name="id_tanaman_ditanam"
-                                value="{{ $jadwal->id_tanaman_ditanam }}">
-
-                            <input type="hidden"
-                                name="tanggal_perawatan"
-                                value="{{ \Carbon\Carbon::parse($jadwal->tanggal_perawatan)->format('Y-m-d') }}">
-
-                            <input type="hidden"
-                                name="waktu_perawatan"
-                                value="{{ $jadwal->waktu_perawatan ?? '08:00:00' }}">
-
-                            <input type="hidden"
-                                name="jenis_pupuk"
-                                value="{{ $jadwal->jenis_pupuk ?? '-' }}">
-
-                            <input type="hidden"
-                                name="jadwal_keterangan"
-                                value="{{ $jadwal->keterangan ?? '' }}">
-                            @csrf
-                            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 10px;">
-                                <!-- Input Suhu Aktual -->
-                                <div>
-                                    <label style="font-size: 11px; font-weight: 600;">Suhu (°C):</label>
-                                    <input type="number" step="0.1" name="suhu" class="form-control-sm-custom" value="{{ $jadwal->suhu }}">
+                                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 10px;">
+                                    <div>
+                                        <label style="font-size: 11px; font-weight: 600;">Suhu (°C):</label>
+                                        <input type="number" step="0.1" name="suhu" class="form-control-sm-custom" value="{{ $jadwal->suhu }}">
+                                    </div>
+                                    <div>
+                                        <label style="font-size: 11px; font-weight: 600;">pH Tanah:</label>
+                                        <input type="number" step="0.1" name="pH_tanaman" class="form-control-sm-custom" value="{{ $jadwal->pH_tanaman }}">
+                                    </div>
+                                    <div>
+                                        <label style="font-size: 11px; font-weight: 600;">Tinggi (cm):</label>
+                                        <input type="number" step="0.1" name="tinggi_tanaman" class="form-control-sm-custom" value="{{ $jadwal->tinggi_tanaman }}">
+                                    </div>
+                                    <div>
+                                        <label style="font-size: 11px; font-weight: 600;">Kondisi:</label>
+                                        <select name="kondisi" class="form-control-sm-custom">
+                                            <option value="Sehat" {{ $jadwal->kondisi == 'Sehat' ? 'selected' : '' }}>Sehat</option>
+                                            <option value="Terkena Hama" {{ $jadwal->kondisi == 'Terkena Hama' ? 'selected' : '' }}>Terkena Hama</option>
+                                        </select>
+                                    </div>
                                 </div>
-                                <!-- Input pH Aktual -->
-                                <div>
-                                    <label style="font-size: 11px; font-weight: 600;">pH Tanah:</label>
-                                    <input type="number" step="0.1" name="pH_tanaman" class="form-control-sm-custom" value="{{ $jadwal->pH_tanaman }}">
-                                </div>
-                                <!-- Input Tinggi Tanaman Aktual -->
-                                <div>
-                                    <label style="font-size: 11px; font-weight: 600;">Tinggi (cm):</label>
-                                    <input type="number" step="0.1" name="tinggi_tanaman" class="form-control-sm-custom" value="{{ $jadwal->tinggi_tanaman }}">
-                                </div>
-                                <!-- Pilih Kondisi Aktual -->
-                                <div>
-                                    <label style="font-size: 11px; font-weight: 600;">Kondisi:</label>
-                                    <select name="kondisi" class="form-control-sm-custom">
-                                        <option value="Sehat" {{ $jadwal->kondisi == 'Sehat' ? 'selected' : '' }}>Sehat</option>
-                                        <option value="Terkena Hama" {{ $jadwal->kondisi == 'Terkena Hama' ? 'selected' : '' }}>Terkena Hama</option>
-                                    </select>
-                                </div>
-                            </div>
 
-                            <!-- Catatan Harian / Keterangan -->
-                            <div style="margin-bottom: 10px;">
-                                <label style="font-size: 11px; font-weight: 600;">Catatan / Keterangan:</label>
-                                <input type="text" name="catatan_harian" class="form-control-sm-custom" value="{{ $jadwal->catatan_harian }}" placeholder="Misal: Sudah disiram dan diberi pupuk tambahan...">
-                            </div>
+                                <div style="margin-bottom: 10px;">
+                                    <label style="font-size: 11px; font-weight: 600;">Catatan / Keterangan:</label>
+                                    <input type="text" name="catatan_harian" class="form-control-sm-custom" value="{{ $jadwal->catatan_harian }}" placeholder="Misal: Sudah disiram dan diberi pupuk tambahan...">
+                                </div>
 
-                            <div style="display: flex; justify-content: space-between; align-items: center;">
-                                <label style="font-size: 12px; font-weight: 500; color: #2d6a4f; cursor: pointer;">
-                                    <input type="checkbox" name="status" value="Selesai" {{ $jadwal->status == 'Selesai' ? 'checked' : '' }}> Selesai Dikerjakan
-                                </label>
-                                <button type="submit" class="btn-save-update">Simpan Update</button>
-                            </div>
-                        </form>
-
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <label style="font-size: 12px; font-weight: 500; color: #2d6a4f; cursor: pointer;">
+                                        <input type="checkbox" name="status" value="Selesai" {{ $jadwal->status == 'Selesai' ? 'checked' : '' }}> Selesai Dikerjakan
+                                    </label>
+                                    <button type="submit" class="btn-save-update">Simpan Update</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
                     @empty
                     <div class="empty-state">
                         <i class="fa-solid fa-calendar-xmark" style="font-size: 40px; color: #52b788; margin-bottom: 12px;"></i>

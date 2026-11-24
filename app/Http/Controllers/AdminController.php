@@ -8,24 +8,189 @@ use Illuminate\Http\Request;
 
 class AdminController extends Controller
 {
-    // Menampilkan dashboard admin
+    // ==========================================
+    // DASHBOARD ADMIN
+    // ==========================================
+
     public function index()
     {
         return view('admin.dashboard');
     }
 
-    // Menampilkan daftar pengguna untuk dimonitoring
-    public function monitoring()
+    // ==========================================
+    // DAFTAR PENGGUNA, PENCARIAN, DAN FILTER
+    // ==========================================
+
+    public function monitoring(Request $request)
     {
-        $pengguna = DB::table('pemilik_tanaman')
-            ->where('ROLE', 'pengguna')
-            ->orderBy('username')
+        // Mengambil nilai pencarian dan filter
+        $search = trim($request->query('search', ''));
+        $kondisi = $request->query('kondisi', '');
+        $tanggal = $request->query('tanggal', '');
+
+        // Validasi input filter
+        $request->validate([
+            'search' => 'nullable|string|max:255',
+            'kondisi' => 'nullable|in:Sehat,Perhatian,Terkena Hama',
+            'tanggal' => 'nullable|date',
+        ]);
+
+        // Query utama daftar pengguna
+        $query = DB::table('pemilik_tanaman as p')
+            ->where('p.ROLE', 'pengguna')
+            ->select('p.*');
+
+        // Mengambil daftar jenis tanaman milik pengguna
+        $query->selectSub(function ($subquery) {
+
+            $subquery->from('tanaman_ditanam as td')
+                ->selectRaw(
+                    'GROUP_CONCAT(DISTINCT td.jenis_bibit SEPARATOR ", ")'
+                )
+                ->whereColumn(
+                    'td.id_pemilik_tanaman',
+                    'p.id_pemilik_tanaman'
+                );
+        }, 'daftar_tanaman');
+
+        // ==========================================
+        // PENCARIAN NAMA, EMAIL, DAN JENIS TANAMAN
+        // ==========================================
+
+        if ($search !== '') {
+
+            $query->where(function ($q) use ($search) {
+
+                $q->where('p.username', 'LIKE', "%{$search}%")
+                    ->orWhere('p.email', 'LIKE', "%{$search}%")
+
+                    // Pencarian berdasarkan jenis tanaman
+                    ->orWhereExists(function ($subquery) use ($search) {
+
+                        $subquery->select(DB::raw(1))
+                            ->from('tanaman_ditanam as td')
+                            ->whereColumn(
+                                'td.id_pemilik_tanaman',
+                                'p.id_pemilik_tanaman'
+                            )
+                            ->where(
+                                'td.jenis_bibit',
+                                'LIKE',
+                                "%{$search}%"
+                            );
+                    });
+            });
+        }
+
+        // ==========================================
+        // FILTER BERDASARKAN KONDISI DAN TANGGAL
+        // ==========================================
+
+        if ($kondisi !== '' || $tanggal !== '') {
+
+            $query->whereExists(function ($subquery) use ($kondisi, $tanggal) {
+
+                $subquery->select(DB::raw(1))
+                    ->from('perawatan as pr')
+                    ->join(
+                        'tanaman_ditanam as td',
+                        'td.id_tanaman_ditanam',
+                        '=',
+                        'pr.id_tanaman_ditanam'
+                    )
+                    ->whereColumn(
+                        'td.id_pemilik_tanaman',
+                        'p.id_pemilik_tanaman'
+                    );
+
+                // Filter kondisi tanaman
+                if ($kondisi !== '') {
+                    $subquery->where('pr.kondisi', $kondisi);
+                }
+
+                // Filter tanggal perawatan
+                if ($tanggal !== '') {
+                    $subquery->whereDate(
+                        'pr.tanggal_perawatan',
+                        $tanggal
+                    );
+                }
+            });
+        }
+
+        // Mengambil pengguna sesuai pencarian dan filter
+        $pengguna = $query
+            ->orderBy('p.username')
             ->get();
 
-        return view('admin.monitoring', compact('pengguna'));
+        // ==========================================
+        // MENGHITUNG STATISTIK MONITORING
+        // ==========================================
+
+        // Total tanaman yang dimiliki seluruh pengguna
+        $totalDipantau = DB::table('tanaman_ditanam as td')
+            ->join(
+                'pemilik_tanaman as p',
+                'p.id_pemilik_tanaman',
+                '=',
+                'td.id_pemilik_tanaman'
+            )
+            ->where('p.ROLE', 'pengguna')
+            ->count('td.id_tanaman_ditanam');
+
+        // Query dasar untuk menghitung kondisi perawatan
+        $rekapPerawatan = DB::table('perawatan as pr')
+            ->join(
+                'tanaman_ditanam as td',
+                'td.id_tanaman_ditanam',
+                '=',
+                'pr.id_tanaman_ditanam'
+            )
+            ->join(
+                'pemilik_tanaman as p',
+                'p.id_pemilik_tanaman',
+                '=',
+                'td.id_pemilik_tanaman'
+            )
+            ->where('p.ROLE', 'pengguna')
+            ->whereNotNull('pr.tanggal_perawatan');
+
+        // Jumlah data perawatan dengan kondisi sehat
+        $kondisiSehat = (clone $rekapPerawatan)
+            ->where('pr.kondisi', 'Sehat')
+            ->count();
+
+        // Jumlah data perawatan dengan kondisi perhatian
+        // atau terkena hama
+        $terkenaHama = (clone $rekapPerawatan)
+            ->whereIn('pr.kondisi', [
+                'Perhatian',
+                'Terkena Hama',
+            ])
+            ->count();
+
+        /*
+         * Sementara masih 0 karena nama kolom status
+         * Selesai Dikerjakan pada tabel perawatan belum diketahui.
+         */
+        $perawatanSelesai = 0;
+
+        return view(
+            'admin.monitoring',
+            compact(
+                'pengguna',
+                'totalDipantau',
+                'kondisiSehat',
+                'terkenaHama',
+                'perawatanSelesai'
+            )
+        );
     }
 
-    // Menampilkan tanaman dan perkembangan milik pengguna
+    // ==========================================
+    // MENAMPILKAN TANAMAN MILIK PENGGUNA
+    // ==========================================
+
     public function tanaman($id)
     {
         $pengguna = DB::table('pemilik_tanaman')
@@ -49,12 +214,16 @@ class AdminController extends Controller
 
             // Mengambil data perawatan tanaman
             $perawatan = DB::table('perawatan')
-                ->where('id_tanaman_ditanam', $item->id_tanaman_ditanam)
+                ->where(
+                    'id_tanaman_ditanam',
+                    $item->id_tanaman_ditanam
+                )
                 ->where('id_pemilik_tanaman', $id)
                 ->whereNotNull('tanggal_perawatan')
                 ->whereNotNull('tinggi_tanaman')
                 ->orderBy('tanggal_perawatan')
                 ->orderBy('waktu_perawatan')
+                ->orderBy('id_jadwal')
                 ->get();
 
             // Mengelompokkan perkembangan berdasarkan minggu
@@ -81,9 +250,7 @@ class AdminController extends Controller
                     $terakhir = $items->last();
 
                     return (object) [
-                        // ID untuk proses update kondisi dan catatan
                         'id_jadwal' => $terakhir->id_jadwal,
-
                         'minggu' => $minggu,
                         'tanggal' => $terakhir->tanggal_perawatan,
                         'waktu' => $terakhir->waktu_perawatan ?? '-',
@@ -92,8 +259,6 @@ class AdminController extends Controller
                         'ph' => $terakhir->pH_tanaman ?? '-',
                         'kondisi' => $terakhir->kondisi ?? '',
                         'keterangan' => $terakhir->keterangan ?? '',
-
-                        // Data tambahan jika diperlukan
                         'kelembapan' => $terakhir->kelembapan ?? '-',
                         'jenis_pupuk' => $terakhir->jenis_pupuk ?? '-',
                     ];
@@ -107,7 +272,10 @@ class AdminController extends Controller
         );
     }
 
-    // Method detail monitoring lama
+    // ==========================================
+    // DETAIL MONITORING TANAMAN
+    // ==========================================
+
     public function detailMonitoring($id)
     {
         $data = DB::table('tanaman_ditanam')
@@ -121,6 +289,7 @@ class AdminController extends Controller
                 'tanaman_ditanam.id_tanaman_ditanam',
                 $id
             )
+            ->where('pemilik_tanaman.ROLE', 'pengguna')
             ->select(
                 'tanaman_ditanam.*',
                 'pemilik_tanaman.username'
@@ -141,6 +310,7 @@ class AdminController extends Controller
             ->whereNotNull('tanggal_perawatan')
             ->orderBy('tanggal_perawatan')
             ->orderBy('waktu_perawatan')
+            ->orderBy('id_jadwal')
             ->get();
 
         $tanggalTanam = Carbon::parse($data->tanggal_tanam)
@@ -177,8 +347,12 @@ class AdminController extends Controller
             })
             ->values();
 
-        $umurTanaman = $tanggalTanam->diffInDays(
-            Carbon::today()->startOfDay()
+        // Menghitung umur tanaman
+        $umurTanaman = max(
+            0,
+            $tanggalTanam->diffInDays(
+                Carbon::today()->startOfDay()
+            )
         );
 
         return view(
@@ -187,7 +361,10 @@ class AdminController extends Controller
         );
     }
 
-    // Menyimpan pembaruan kondisi dan catatan dari admin
+    // ==========================================
+    // UPDATE KONDISI DAN CATATAN
+    // ==========================================
+
     public function updateKondisiCatatan(Request $request, $id)
     {
         $request->validate([
@@ -200,8 +377,16 @@ class AdminController extends Controller
         ]);
 
         // Memastikan data perawatan tersedia
-        $perawatan = DB::table('perawatan')
-            ->where('id_jadwal', $id)
+        $perawatan = DB::table('perawatan as pr')
+            ->join(
+                'pemilik_tanaman as p',
+                'p.id_pemilik_tanaman',
+                '=',
+                'pr.id_pemilik_tanaman'
+            )
+            ->where('pr.id_jadwal', $id)
+            ->where('p.ROLE', 'pengguna')
+            ->select('pr.id_jadwal')
             ->first();
 
         if (!$perawatan) {

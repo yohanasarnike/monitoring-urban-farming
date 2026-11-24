@@ -6,25 +6,32 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Monitoring Tanaman | UrbanFarming</title>
 
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Fraunces:wght@500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=EB+Garamond:wght@700;800&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
         }
 
         body {
-            font-family: 'Nunito', sans-serif;
-            background: #f3f6f1;
-            color: #294c37;
-            min-height: 100vh;
+            background-image: url('/img/bg.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
         }
 
         .container {
             width: 100%;
-            padding: 30px 45px;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 30px 35px;
         }
 
         /* HEADER */
@@ -47,35 +54,36 @@
         }
 
         .back-button {
+            width: 48px;
+            height: 48px;
+            flex-shrink: 0;
+            border: 1px solid rgba(255, 255, 255, .3);
+            background: rgba(255, 255, 255, .17);
+            color: white;
+            border-radius: 13px;
             display: flex;
             align-items: center;
             justify-content: center;
-            width: 45px;
-            height: 45px;
-            min-width: 45px;
-            border-radius: 12px;
-            background: white;
-            color: #2d7054;
+            font-size: 23px;
             text-decoration: none;
-            font-size: 24px;
-            font-weight: 800;
-            transition: 0.2s;
+            transition: .2s;
         }
 
         .back-button:hover {
-            background: #e7f4eb;
-            transform: translateX(-3px);
+            background: rgba(255, 255, 255, .3);
         }
 
         .header-content h1 {
-            font-family: 'Fraunces', serif;
-            font-size: 26px;
+            font-size: 32px;
             margin-bottom: 4px;
+            font-weight: 500;
+            line-height: 1.25;
         }
 
         .header-content p {
             font-size: 13px;
-            opacity: 0.92;
+            font-weight: 100;
+            line-height: 1.5;
         }
 
         .page-header::after {
@@ -158,6 +166,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            gap: 12px;
         }
 
         .section-heading h2 {
@@ -173,6 +182,67 @@
             border-radius: 20px;
             font-size: 12px;
             font-weight: 800;
+            white-space: nowrap;
+        }
+
+        /* PEMILIHAN TANAMAN */
+        .plant-selector-wrap {
+            width: 100%;
+            max-width: 850px;
+            margin: 0 auto 20px;
+            background: white;
+            border: 1px solid #e2ebe1;
+            border-radius: 15px;
+            padding: 18px 20px;
+            box-shadow: 0 4px 15px rgba(40, 93, 50, 0.04);
+        }
+
+        .plant-selector-label {
+            display: block;
+            color: #285d32;
+            font-size: 14px;
+            font-weight: 800;
+            margin-bottom: 8px;
+        }
+
+        .plant-selector {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1px solid #cbdccb;
+            border-radius: 10px;
+            background: #f8fbf6;
+            color: #294c37;
+            font-family: 'Nunito', sans-serif;
+            font-size: 14px;
+            font-weight: 700;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .plant-selector:focus {
+            border-color: #398568;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(57, 133, 104, 0.1);
+        }
+
+        .plant-selector-hint {
+            margin-top: 8px;
+            color: #87958a;
+            font-size: 12px;
+        }
+
+        .selection-message {
+            width: 100%;
+            max-width: 850px;
+            margin: 0 auto 20px;
+            padding: 18px;
+            background: #e8f5eb;
+            border: 1px solid #c9e6d0;
+            border-radius: 12px;
+            color: #397052;
+            text-align: center;
+            font-size: 13px;
+            font-weight: 700;
         }
 
         /* DAFTAR TANAMAN */
@@ -189,73 +259,129 @@
             background: #e7f4dc;
             border: 1px solid #9ebd80;
             border-radius: 17px;
-            padding: 18px;
+            padding: 20px;
         }
 
-        /* INFORMASI TANAMAN - RATA KIRI */
+        /* KONSEP 2: INFORMASI DUA SISI */
         .plant-summary {
             display: flex;
             align-items: center;
-            justify-content: flex-start;
-            gap: 30px;
+            justify-content: space-between;
+            gap: 20px;
             margin-bottom: 20px;
         }
 
-        /* FOTO TANAMAN */
+        .plant-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex: 1;
+            min-width: 0;
+        }
+
+        /* IKON TANAMAN */
         .plant-image {
-            width: 120px;
-            height: 120px;
-            min-width: 120px;
-            border-radius: 12px;
-            overflow: hidden;
+            width: 85px;
+            height: 85px;
+            min-width: 85px;
+            border-radius: 15px;
             background: #d8eacb;
             display: flex;
             align-items: center;
             justify-content: center;
         }
 
-        .plant-image img {
-            display: block;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
+        .plant-image span {
+            font-size: 39px;
+            line-height: 1;
         }
 
         .plant-details {
-            flex: 1;
-            text-align: left;
+            min-width: 0;
         }
 
         .plant-details h3 {
             color: #477b32;
-            font-size: 19px;
+            font-size: 21px;
             font-weight: 800;
-            margin-bottom: 12px;
+            margin-bottom: 6px;
         }
 
-        .plant-info {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 7px;
+        .plant-subtitle {
+            color: #64864b;
+            font-size: 12px;
+            margin-bottom: 5px;
         }
 
-        .info-item {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 2px;
+        .plant-date {
+            color: #64864b;
             font-size: 12px;
         }
 
-        .info-item strong {
-            color: #477b32;
-            font-weight: 800;
+        /* INFORMASI SEBELAH KANAN */
+        .plant-right {
+            min-width: 115px;
+            padding-left: 20px;
+            border-left: 1px solid #c9dcb9;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            gap: 7px;
         }
 
-        .info-item span {
+        .plant-age {
+            color: #477b32;
+            font-size: 34px;
+            font-weight: 800;
+            line-height: 1;
+        }
+
+        .plant-age-label {
             color: #64864b;
             font-size: 11px;
+            font-weight: 700;
+        }
+
+        /* BADGE KONDISI */
+        .status-badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 10px;
+            font-weight: 800;
+            white-space: nowrap;
+        }
+
+        .status-baik {
+            background: #dcfce7;
+            color: #15803d;
+        }
+
+        .status-cukup {
+            background: #dbeafe;
+            color: #1d4ed8;
+        }
+
+        .status-perhatian {
+            background: #fef3c7;
+            color: #d97706;
+        }
+
+        .status-kurang {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        .status-panen {
+            background: #bbf7d0;
+            color: #166534;
+        }
+
+        .status-default {
+            background: #eeeeee;
+            color: #666666;
         }
 
         /* TABEL PERKEMBANGAN */
@@ -299,47 +425,7 @@
             border-bottom: 1px solid #e5ece4;
         }
 
-        /* BADGE KONDISI TANAMAN */
-        .status-badge {
-            display: inline-block;
-            padding: 6px 13px;
-            border-radius: 20px;
-            font-size: 11px;
-            font-weight: 800;
-            white-space: nowrap;
-        }
-
-        .status-baik {
-            background: #dcfce7;
-            color: #15803d;
-        }
-
-        .status-cukup {
-            background: #dbeafe;
-            color: #1d4ed8;
-        }
-
-        .status-perhatian {
-            background: #fef3c7;
-            color: #d97706;
-        }
-
-        .status-kurang {
-            background: #fee2e2;
-            color: #dc2626;
-        }
-
-        .status-panen {
-            background: #bbf7d0;
-            color: #166534;
-        }
-
-        .status-default {
-            background: #eeeeee;
-            color: #666666;
-        }
-
-        /* TOMBOL BUKA DETAIL MINGGU */
+        /* TOMBOL DETAIL MINGGU */
         .week-toggle {
             width: 100%;
             border: none;
@@ -531,47 +617,100 @@
             font-size: 13px;
         }
 
-        /* DESKTOP 1024PX */
-        @media screen and (min-width: 1024px) and (max-width: 1024px) {
+        /* RESPONSIVE DESKTOP 1024PX */
+        @media screen and (max-width: 1024px) {
             .container {
                 padding: 22px 28px;
             }
 
-            .page-header {
-                padding: 20px 25px;
-            }
-
             .plant-list,
-            .section-heading {
-                max-width: 750px;
+            .section-heading,
+            .plant-selector-wrap,
+            .selection-message {
+                max-width: 850px;
             }
 
-            .plant-image {
-                width: 110px;
-                height: 110px;
-                min-width: 110px;
+            .plant-card {
+                padding: 18px;
             }
+
         }
 
-        /* RESPONSIVE MOBILE */
+        /* RESPONSIVE HP */
         @media screen and (max-width: 700px) {
             .container {
                 padding: 18px 14px;
             }
 
+            .page-header {
+                padding: 20px;
+            }
+
+            .header-content h1 {
+                font-size: 22px;
+            }
+
+            .header-content p {
+                font-size: 11px;
+            }
+
+            .plant-card {
+                padding: 15px;
+            }
+
+            .plant-selector-wrap {
+                padding: 15px;
+            }
+
+            .plant-selector {
+                font-size: 13px;
+            }
+
             .plant-summary {
-                align-items: flex-start;
                 gap: 15px;
             }
 
+            .plant-left {
+                gap: 11px;
+            }
+
             .plant-image {
-                width: 95px;
-                height: 95px;
-                min-width: 95px;
+                width: 62px;
+                height: 62px;
+                min-width: 62px;
+                border-radius: 12px;
+            }
+
+            .plant-image span {
+                font-size: 30px;
             }
 
             .plant-details h3 {
                 font-size: 17px;
+            }
+
+            .plant-subtitle,
+            .plant-date {
+                font-size: 10px;
+            }
+
+            .plant-right {
+                min-width: 80px;
+                padding-left: 12px;
+                gap: 6px;
+            }
+
+            .plant-age {
+                font-size: 27px;
+            }
+
+            .plant-age-label {
+                font-size: 10px;
+            }
+
+            .status-badge {
+                padding: 5px 8px;
+                font-size: 9px;
             }
 
             .detail-content {
@@ -608,14 +747,16 @@
         <!-- HEADER -->
         <div class="page-header">
             <div class="header-main">
+
                 <a href="{{ route('admin.monitoring') }}" class="back-button">
-                    &#8592;
+                    <i class="fa-solid fa-arrow-left"></i>
                 </a>
 
                 <div class="header-content">
                     <h1>Detail Monitoring</h1>
                     <p>Pantau perkembangan tanaman pengguna UrbanFarming.</p>
                 </div>
+
             </div>
         </div>
 
@@ -642,73 +783,145 @@
 
         <!-- PROFIL PENGGUNA -->
         <div class="profile-card">
+
             <div class="profile-avatar">
                 {{ strtoupper(substr($pengguna->username, 0, 1)) }}
             </div>
 
             <div class="profile-info">
                 <h2>{{ $pengguna->username }}</h2>
-                <p>Daftar tanaman yang dikelola oleh pengguna</p>
             </div>
+
         </div>
 
         <!-- JUDUL DAFTAR TANAMAN -->
         <div class="section-heading">
+
             <h2>Tanaman Pengguna</h2>
 
             <span class="plant-count">
                 {{ $tanaman->count() }} Tanaman
             </span>
+
         </div>
 
         @if ($tanaman->count() > 0)
 
+        <!-- DROPDOWN HANYA MUNCUL JIKA TANAMAN LEBIH DARI SATU -->
+        @if ($tanaman->count() > 1)
+
+        <div class="plant-selector-wrap">
+
+            <label for="plantSelector" class="plant-selector-label">
+                Pilih Tanaman yang Ingin Dipantau
+            </label>
+
+            <select id="plantSelector" class="plant-selector">
+
+                <option value="">
+                    -- Tanaman yang akan dipantau --
+                </option>
+
+                @foreach ($tanaman as $item)
+                <option value="{{ $item->id_tanaman_ditanam }}">
+                    {{ $item->jenis_bibit }}
+                    — {{ $item->jenis_lahan ?? 'Jenis lahan belum ditentukan' }}
+                    — {{ $item->tanggal_tanam
+                                    ? \Carbon\Carbon::parse($item->tanggal_tanam)->format('d M Y')
+                                    : 'Tanggal belum tersedia' }}
+                </option>
+                @endforeach
+
+            </select>
+        </div>
+
+        <div id="selectionMessage" class="selection-message">
+            🌱 Silakan pilih tanaman yang ingin kamu lihat terlebih dahulu.
+        </div>
+
+        @endif
+
+        <!-- DAFTAR TANAMAN -->
         <div class="plant-list">
 
             @foreach ($tanaman as $item)
 
-            <div class="plant-card">
+            @php
+            $latestPerkembangan = $item->perkembangan
+            ->sortBy('minggu')
+            ->last();
+
+            $kondisiTerbaru = strtolower(
+            trim($latestPerkembangan->kondisi ?? '')
+            );
+
+            $statusClassTerbaru = match ($kondisiTerbaru) {
+            'baik' => 'status-baik',
+            'cukup baik' => 'status-cukup',
+            'perlu perhatian' => 'status-perhatian',
+            'kurang baik' => 'status-kurang',
+            'siap panen' => 'status-panen',
+            default => 'status-default',
+            };
+
+            $umurTanaman = $item->tanggal_tanam
+            ? \Carbon\Carbon::parse($item->tanggal_tanam)
+            ->startOfDay()
+            ->diffInDays(\Carbon\Carbon::today())
+            : null;
+            @endphp
+
+            <div
+                class="plant-card"
+                data-plant-id="{{ $item->id_tanaman_ditanam }}"
+                @if ($tanaman->count() > 1) hidden @endif>
 
                 <!-- INFORMASI TANAMAN -->
                 <div class="plant-summary">
 
-                    <div class="plant-image">
-                        <img
-                            src="{{ asset('tanaman/selada.jpeg') }}"
-                            alt="{{ $item->jenis_bibit }}"
-                            onerror="this.style.display='none'; this.parentElement.innerHTML='🌱';">
-                    </div>
+                    <!-- SEBELAH KIRI -->
+                    <div class="plant-left">
 
-                    <div class="plant-details">
-                        <h3>{{ $item->jenis_bibit }}</h3>
+                        <div class="plant-image">
+                            <span>🌱</span>
+                        </div>
 
-                        <div class="plant-info">
+                        <div class="plant-details">
 
-                            <div class="info-item">
-                                <strong>Tanggal Tanam</strong>
-                                <span>
-                                    {{ $item->tanggal_tanam
-                                                ? \Carbon\Carbon::parse($item->tanggal_tanam)->format('d M Y')
-                                                : '-' }}
-                                </span>
-                            </div>
+                            <h3>{{ $item->jenis_bibit }}</h3>
 
-                            <div class="info-item">
-                                <strong>Umur Tanaman</strong>
-                                <span>
-                                    {{ $item->tanggal_tanam
-                                                ? \Carbon\Carbon::parse($item->tanggal_tanam)->startOfDay()->diffInDays(\Carbon\Carbon::today()) . ' Hari'
-                                                : '-' }}
-                                </span>
-                            </div>
+                            <p class="plant-subtitle">
+                                {{ $item->jenis_lahan ?? 'Jenis lahan belum ditentukan' }}
+                            </p>
 
-                            <div class="info-item">
-                                <strong>Jenis Lahan</strong>
-                                <span>{{ $item->jenis_lahan ?? '-' }}</span>
-                            </div>
+                            <p class="plant-date">
+                                Ditanam:
+                                {{ $item->tanggal_tanam
+                                            ? \Carbon\Carbon::parse($item->tanggal_tanam)->format('d M Y')
+                                            : '-' }}
+                            </p>
 
                         </div>
+
                     </div>
+
+                    <!-- SEBELAH KANAN -->
+                    <div class="plant-right">
+
+                        <div class="plant-age">
+                            {{ $umurTanaman ?? '-' }}
+                        </div>
+
+                        <div class="plant-age-label">
+                            Hari
+                        </div>
+
+                        <span class="status-badge {{ $statusClassTerbaru }}">
+                            {{ $latestPerkembangan->kondisi ?? 'Belum Dicek' }}
+                        </span>
+
+                    </div>
+
                 </div>
 
                 <!-- TABEL PERKEMBANGAN -->
@@ -731,7 +944,9 @@
                             @forelse ($item->perkembangan as $perkembangan)
 
                             @php
-                            $kondisi = strtolower(trim($perkembangan->kondisi ?? ''));
+                            $kondisi = strtolower(
+                            trim($perkembangan->kondisi ?? '')
+                            );
 
                             $statusClass = match ($kondisi) {
                             'baik' => 'status-baik',
@@ -745,6 +960,7 @@
 
                             <!-- BARIS RINGKASAN MINGGU -->
                             <tr>
+
                                 <td>
                                     <button
                                         type="button"
@@ -752,7 +968,9 @@
                                         onclick="toggleWeek('week-{{ $item->id_tanaman_ditanam }}-{{ $perkembangan->minggu }}', this)">
 
                                         Minggu {{ $perkembangan->minggu }}
+
                                         <span class="arrow">▼</span>
+
                                     </button>
                                 </td>
 
@@ -765,6 +983,7 @@
                                         {{ $perkembangan->kondisi ?: 'Belum Dicek (Terjadwal)' }}
                                     </span>
                                 </td>
+
                             </tr>
 
                             <!-- DETAIL MONITORING MINGGU -->
@@ -774,7 +993,6 @@
 
                                 <td colspan="3">
 
-                                    <!-- FORM EDIT KONDISI DAN CATATAN -->
                                     <form
                                         class="admin-edit-form"
                                         action="{{ route('admin.perawatan.update', $perkembangan->id_jadwal) }}"
@@ -787,30 +1005,40 @@
 
                                             <!-- TINGGI TANAMAN -->
                                             <div class="detail-item">
+
                                                 <strong>Tinggi Tanaman</strong>
+
                                                 <span>
                                                     {{ $perkembangan->tinggi_tanaman ?? '-' }} cm
                                                 </span>
+
                                             </div>
 
                                             <!-- SUHU -->
                                             <div class="detail-item">
+
                                                 <strong>Suhu</strong>
+
                                                 <span>
                                                     {{ $perkembangan->suhu ?? '-' }} °C
                                                 </span>
+
                                             </div>
 
                                             <!-- PH TANAH -->
                                             <div class="detail-item">
+
                                                 <strong>pH Tanah</strong>
+
                                                 <span>
                                                     {{ $perkembangan->ph ?? '-' }}
                                                 </span>
+
                                             </div>
 
-                                            <!-- DROPDOWN KONDISI TANAMAN -->
+                                            <!-- DROPDOWN KONDISI -->
                                             <div class="detail-item">
+
                                                 <label for="kondisi-{{ $perkembangan->id_jadwal }}">
                                                     Kondisi Tanaman
                                                 </label>
@@ -851,12 +1079,14 @@
                                                     </option>
 
                                                 </select>
+
                                             </div>
 
                                             <!-- CATATAN ADMIN -->
                                             <div class="detail-item">
+
                                                 <label for="keterangan-{{ $perkembangan->id_jadwal }}">
-                                                    Catatan / Saran Admin
+                                                    Catatan Perawatan
                                                 </label>
 
                                                 <textarea
@@ -864,13 +1094,15 @@
                                                     name="keterangan"
                                                     rows="2"
                                                     placeholder="Berikan catatan atau saran perawatan...">{{ $perkembangan->keterangan }}</textarea>
+
                                             </div>
 
-                                            <!-- TOMBOL SIMPAN -->
                                             <div class="save-wrapper">
+
                                                 <button type="submit" class="btn-save">
                                                     Simpan
                                                 </button>
+
                                             </div>
 
                                         </div>
@@ -878,6 +1110,7 @@
                                     </form>
 
                                 </td>
+
                             </tr>
 
                             @empty
@@ -891,8 +1124,11 @@
                             @endforelse
 
                         </tbody>
+
                     </table>
+
                 </div>
+
             </div>
 
             @endforeach
@@ -900,20 +1136,71 @@
         </div>
 
         @else
-
-        <div class="empty-state">
-            <div class="empty-icon">🌿</div>
-            <h3>Belum Ada Tanaman</h3>
-            <p>Pengguna ini belum memiliki data tanaman yang terdaftar.</p>
-        </div>
-
         @endif
 
     </div>
 
-    <!-- JAVASCRIPT UNTUK MEMBUKA DETAIL MINGGU -->
+    <!-- JAVASCRIPT PEMILIHAN TANAMAN -->
     <script>
+        document.addEventListener('DOMContentLoaded', function() {
+
+            const selector = document.getElementById('plantSelector');
+            const selectionMessage = document.getElementById('selectionMessage');
+            const plantCards = document.querySelectorAll('.plant-card');
+
+            if (!selector) {
+                return;
+            }
+
+            selector.addEventListener('change', function() {
+
+                const selectedPlantId = this.value;
+
+                document.querySelectorAll('.week-detail').forEach(row => {
+                    row.classList.remove('show');
+                });
+
+                document.querySelectorAll('.week-toggle').forEach(button => {
+                    button.classList.remove('active');
+                });
+                plantCards.forEach(card => {
+                    card.hidden = true;
+                });
+
+                if (selectedPlantId === '') {
+
+                    selectionMessage.style.display = 'block';
+
+                    selectionMessage.innerHTML =
+                        '🌱 Silakan pilih tanaman yang ingin kamu lihat terlebih dahulu.';
+
+                    return;
+                }
+
+                const selectedCard = document.querySelector(
+                    '.plant-card[data-plant-id="' + selectedPlantId + '"]'
+                );
+
+                if (selectedCard) {
+
+                    selectedCard.hidden = false;
+                    selectionMessage.style.display = 'none';
+
+                } else {
+
+                    selectionMessage.style.display = 'block';
+
+                    selectionMessage.innerHTML =
+                        'Tanaman yang dipilih tidak ditemukan.';
+                }
+
+            });
+
+        });
+
+        // JAVASCRIPT DETAIL MINGGU
         function toggleWeek(id, button) {
+
             const detail = document.getElementById(id);
 
             if (!detail) return;

@@ -123,11 +123,11 @@ class TanamanController extends Controller
 
                 $keterangan = $penyiraman
                     ? 'Penyiraman dan pemupukan tanaman '
-                        . $tanaman->jenis_bibit
-                        . ' hari ke-' . $hari . '.'
+                    . $tanaman->jenis_bibit
+                    . ' hari ke-' . $hari . '.'
                     : 'Pemupukan tanaman '
-                        . $tanaman->jenis_bibit
-                        . ' hari ke-' . $hari . '.';
+                    . $tanaman->jenis_bibit
+                    . ' hari ke-' . $hari . '.';
             } elseif ($penyiraman) {
                 $waktu = '08:00:00';
                 $jenisPupuk = '-';
@@ -202,20 +202,32 @@ class TanamanController extends Controller
      */
     public function index()
     {
+        $user = Auth::user();
         $idPemilik = Auth::id();
+
+        
+        if ($user && strtolower($user->ROLE ?? '') === 'admin') {
+            return redirect()->route('admin.dashboard');
+        }
 
         $tanamanAktif = TanamanDitanam::where(
             'id_pemilik_tanaman',
             $idPemilik
         )->get();
 
-        if ($tanamanAktif->isEmpty()) {
-            return redirect('/tanaman/tambah')
-                ->with(
-                    'info',
-                    'Silakan tambahkan tanaman pertama kamu terlebih dahulu.'
-                );
+        // if ($tanamanAktif->isEmpty()) {
+        //     return redirect('/tanaman/tambah')
+        //         ->with(
+        //             'info',
+        //             'Silakan tambahkan tanaman pertama kamu terlebih dahulu.'
+        //         );
+        // }
+
+        if ($idPemilik && $tanamanAktif->isEmpty() && !session()->has('sudah_cek_tanaman')) {
+            session(['sudah_cek_tanaman' => true]);
+            return redirect('/tanaman/tambah');
         }
+
 
         $jadwalPerawatan = $this->ambilSemuaJadwal(
             $tanamanAktif,
@@ -256,7 +268,7 @@ class TanamanController extends Controller
                 ->withInput()
                 ->withErrors([
                     'jenis_bibit' =>
-                        'Kriteria tanaman tidak ditemukan. Periksa nama tanaman pada tabel kriteria tanaman.',
+                    'Kriteria tanaman tidak ditemukan. Periksa nama tanaman pada tabel kriteria tanaman.',
                 ]);
         }
 

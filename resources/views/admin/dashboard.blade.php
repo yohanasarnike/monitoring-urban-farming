@@ -13,14 +13,18 @@
     <link rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    <!-- CSS Dashboard Utama -->
     <link rel="stylesheet" href="{{ asset('css/dashboardUtama.css') }}">
 
     <style>
-        /* ==============================
-           DASHBOARD ADMIN
-        ============================== */
+        body {
+            background-image: url('/img/bg.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+        }
 
+        /* DASHBOARD ADMIN */
         .admin-dashboard .features-grid {
             display: flex;
             justify-content: flex-start;
@@ -61,10 +65,7 @@
             line-height: 1.6;
         }
 
-        /* ==============================
-           NAVBAR ADMIN
-        ============================== */
-
+        /* NAVBAR ADMIN */
         .navbar {
             display: flex;
             align-items: center;
@@ -180,11 +181,6 @@
             color: #a82323;
         }
 
-        /* ==============================
-           RESPONSIVE LAPTOP
-           Maksimal 1024px
-        ============================== */
-
         @media (max-width: 1024px) {
 
             .navbar {
@@ -233,7 +229,7 @@
 
     <!-- Navbar Web -->
     <div class="navbar">
-         <h2 style="">🌱 Selamat Datang, {{ Auth::user()->nama ?? Auth::user()->username }}!</h2>
+         <h2 style="">🌱 Selamat Datang, Admin {{ Auth::user()->nama ?? Auth::user()->username }}!</h2>
         <div class="nav-links">
             <a href="" class="active">Beranda</a>
             <a href="" class="notification-badge"><i class="fa-regular fa-bell"></i> Notifikasi</a>
@@ -259,8 +255,8 @@
         <!-- Banner Selamat Datang -->
         <div class="welcome-banner">
             <div class="welcome-text">
-                <h1>Kelola Kebun Urban Anda</h1>
-                <p>Pantau perkembangan tanaman, jadwalkan perawatan, dan konsultasikan kendala pertanian Anda dengan mudah.</p>
+                <h1>Selamat Datang di Dashboard Admin!</h1>
+                <p>Pantau pertumbuhan tanaman anggota, kelola jadwal perawatan, dan temukan solusi untuk setiap kendala budidaya.</p>
             </div>
         </div>
 
@@ -283,7 +279,7 @@
                 <p>Pantau tanaman setiap pengguna</p>
             </a>
 
-            <a href="" class="feature-card">
+             <a href="{{ route('admin.konsultasi.index') }}" class="feature-card">
                 <div class="feature-icon">
                     <i class="fa-regular fa-comments"></i>
                 </div>
@@ -318,5 +314,4 @@
 
 
 </body>
-
 </html>

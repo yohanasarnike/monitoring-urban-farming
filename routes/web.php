@@ -18,9 +18,10 @@ Route::get('/', function () {
 Route::get('/login', [AuthController::class, 'showLogin'])
     ->name('login');
 
-// Dashboard Utama & Admin
+// Dashboard pengguna & utama
 Route::get('/dashboard', [TanamanController::class, 'index'])->name('dashboard');
 Route::get('/dashboard.sistem', [DashboardSistem::class, 'index'])->name('dashboard.sistem');
+
 
 // Notifikasi
 Route::get('/notifications', function () {
@@ -38,6 +39,8 @@ Route::post('/konsultasi/send', [ConsultationController::class, 'store'])->name(
 // Tanaman & Jadwal Perawatan
 Route::get('/tanaman/tambah', [TanamanController::class, 'create']);
 Route::post('/tanaman/tambah', [TanamanController::class, 'store']);
+
+//authentikasi
 Route::post('/login', [AuthController::class, 'login'])
     ->name('login.process');
 
@@ -54,6 +57,7 @@ Route::post('/logout', [AuthController::class, 'logout'])
 Route::get('/dashboard', [TanamanController::class, 'index'])
     ->name('dashboard');
 
+
 //jadwal perawatan
 Route::get('/jadwal-perawatan', [TanamanController::class, 'jadwalIndex'])->name('jadwal.index');
 Route::post('/perawatan/update/{id}', [TanamanController::class, 'updatePerawatan'])->name('perawatan.update');
@@ -64,6 +68,7 @@ Route::post('/perawatan/update/{id}', [TanamanController::class, 'updatePerawata
 Route::middleware(['auth'])->group(function () {
     Route::get('/admin/dashboard', [DashboardController::class, 'index'])
         ->name('admin.dashboard');
+
 //kelola data tanaman
     Route::get('/kelola-data', [DashboardController::class, 'kelolaData'])
         ->name('admin.kelola-data');
@@ -100,8 +105,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
     )->name('admin.perawatan.update');
 });
 
-Route::get('/dashboard.sistem', [DashboardSistem::class, 'index'])
-    ->name('dashboard.sistem');
+
 
 // Notifikasi
 Route::get('/notifications', function () {
@@ -116,12 +120,13 @@ Route::get('/notifikasi', function () {
 Route::get('/konsultasi', function () {
     return view('konsultasi.welcome');
 })->name('konsultasi.welcome');
-
 Route::get('/konsultasi/chat', [ConsultationController::class, 'index'])
     ->name('konsultasi.chat');
-
 Route::post('/konsultasi/send', [ConsultationController::class, 'store'])
     ->name('konsultasi.send');
+Route::get('/konsultasi/messages', [ConsultationController::class, 'getMessages'])
+    ->name('konsultasi.messages');
+
 
 // Tanaman dan jadwal perawatan
 // Route::get('/tanaman/tambah', [TanamanController::class, 'create'])
@@ -149,3 +154,5 @@ Route::get('/reset-password/{token}', [AuthController::class, 'showResetPassword
 
 Route::post('/reset-password', [AuthController::class, 'resetPassword'])
     ->name('password.update');
+
+    
