@@ -12,14 +12,18 @@
     <link rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    <!-- CSS Dashboard Utama -->
     <link rel="stylesheet" href="{{ asset('css/dashboardUtama.css') }}">
 
     <style>
-        /* ==============================
-           DASHBOARD ADMIN
-        ============================== */
+        body {
+            background-image: url('/img/bg.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+        }
 
+        /* DASHBOARD ADMIN */
         .admin-dashboard .features-grid {
             display: flex;
             justify-content: flex-start;
@@ -60,10 +64,7 @@
             line-height: 1.6;
         }
 
-        /* ==============================
-           NAVBAR ADMIN
-        ============================== */
-
+        /* NAVBAR ADMIN */
         .navbar {
             display: flex;
             align-items: center;
@@ -179,11 +180,6 @@
             color: #a82323;
         }
 
-        /* ==============================
-           RESPONSIVE LAPTOP
-           Maksimal 1024px
-        ============================== */
-
         @media (max-width: 1024px) {
 
             .navbar {
@@ -229,10 +225,6 @@
 </head>
 
 <body>
-
-    <!-- ==============================
-         NAVBAR ADMIN
-    ============================== -->
 
     <div class="navbar">
 

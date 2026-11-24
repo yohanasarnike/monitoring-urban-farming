@@ -7,8 +7,12 @@
 
     <title>Detail Monitoring - Urban Farming</title>
 
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Font Poppins -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
         * {
@@ -21,6 +25,10 @@
             font-family: 'Poppins', sans-serif;
             background: #fff;
             color: #244f3c;
+        }
+
+        body *:not(i):not([class*="fa-"]) {
+            font-family: 'Poppins', sans-serif !important;
         }
 
         .navbar {

@@ -4,430 +4,598 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Monitoring Pengguna | UrbanFarming</title>
+    <title>Monitoring Pengguna - Urban Farming</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
-        /* =====================================
-           DASAR HALAMAN
-        ===================================== */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
         }
 
-        html,
         body {
-            width: 100%;
-            min-height: 100vh;
-            font-family: Arial, sans-serif;
-            background: #f3f6f1;
-            color: #344536;
+            background-image: url('/img/bg.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            color: #304238;
         }
 
-        .monitoring-page {
-            width: 100%;
-            max-width: 1024px;
-            min-height: 100vh;
+        .container {
+            width: 92%;
+            max-width: 1500px;
             margin: 0 auto;
-            padding: 35px 38px;
+            padding: 16px 0 30px;
         }
 
-        /* =====================================
-   HEADER MONITORING
-===================================== */
+        /* ================= HEADER ================= */
+
         .page-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 20px;
-
-            padding: 35px 40px;
-            margin-bottom: 28px;
-
-            background: linear-gradient(110deg,
-                    #2d7054,
-                    #4db68c);
-
+            background: linear-gradient(110deg, #2d7559, #49b88e);
             border-radius: 22px;
-            box-shadow: 0 8px 20px rgba(35, 90, 65, 0.15);
+            padding: 20px 30px;
+            min-height: 112px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            color: white;
+            margin-bottom: 18px;
+            box-shadow: 0 8px 20px rgba(38, 111, 81, .10);
         }
 
         .header-left {
             display: flex;
             align-items: center;
-            gap: 20px;
+            gap: 17px;
+            min-width: 0;
         }
 
         .back-button {
-            width: 45px;
-            height: 45px;
-
+            width: 48px;
+            height: 48px;
+            flex-shrink: 0;
+            border: 1px solid rgba(255, 255, 255, .3);
+            background: rgba(255, 255, 255, .17);
+            color: white;
+            border-radius: 13px;
             display: flex;
             align-items: center;
             justify-content: center;
-
-            background: rgba(255, 255, 255, 0.18);
-            color: #ffffff;
-
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            border-radius: 12px;
-
-            font-size: 25px;
+            font-size: 23px;
             text-decoration: none;
-            transition: 0.2s;
+            transition: .2s;
         }
 
         .back-button:hover {
-            background: rgba(255, 255, 255, 0.3);
-            transform: translateX(-3px);
+            background: rgba(255, 255, 255, .3);
         }
 
-        .page-title {
-            font-size: 27px;
-            font-weight: 700;
-            color: #ffffff;
+        .header-title h1 {
+            font-size: 32px;
+            font-weight: 500;
+            line-height: 1.25;
+            margin-bottom: 4px;
         }
 
-        .page-subtitle {
+        .header-title p {
             font-size: 13px;
-            color: #eaf5ee;
-            margin-top: 6px;
+            font-weight: 100;
+            line-height: 1.5;
         }
 
         .admin-label {
-            padding: 10px 18px;
-            background: rgba(255, 255, 255, 0.18);
-            color: #ffffff;
-            border: 1px solid rgba(255, 255, 255, 0.25);
-            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, .35);
+            background: rgba(255, 255, 255, .15);
+            padding: 9px 17px;
+            border-radius: 30px;
             font-size: 12px;
-            font-weight: 600;
-        }
-
-        /* =====================================
-           INTRODUCTION CARD
-        ===================================== */
-        .intro-section {
-            background: #ffffff;
-            border: 1px solid #e8ede5;
-            border-radius: 14px;
-            padding: 25px 27px;
-            margin-bottom: 22px;
-            box-shadow: 0 3px 12px rgba(0, 0, 0, .06);
-        }
-
-        .summary-card {
-            width: 280px;
-            min-height: 110px;
-            background: #ffffff;
-            border: 1px solid #e8ede5;
-            border-radius: 14px;
-            padding: 18px 20px;
-            margin-bottom: 24px;
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            box-shadow: 0 3px 12px rgba(0, 0, 0, .06);
-            transition: .2s;
-        }
-
-        .summary-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, .08);
-        }
-
-        .summary-icon {
-            width: 45px;
-            height: 45px;
-            border-radius: 13px;
-            background: #e7f4eb;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 21px;
-            flex-shrink: 0;
-        }
-
-        .summary-info p {
-            font-size: 12px;
-            color: #849087;
-            margin-bottom: 5px;
-        }
-
-        .summary-info h3 {
-            font-size: 25px;
-            color: #266210;
             font-weight: 700;
+            white-space: nowrap;
         }
 
-        /* =====================================
-           CONTENT CARD
-        ===================================== */
-        .content-card {
-            background: #ffffff;
-            border: 1px solid #e8ede5;
+        /* ================= STATISTIK ================= */
+
+        .monitoring-stats {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 11px;
+            max-width: 1050px;
+            margin: 0 auto 18px;
+        }
+
+        .stat-card {
+            background: white;
+            border: 1px solid #e8ece9;
             border-radius: 14px;
-            padding: 25px;
-            box-shadow: 0 3px 12px rgba(0, 0, 0, .06);
-        }
-
-        .content-header {
+            padding: 12px 17px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            gap: 15px;
-            margin-bottom: 22px;
+            min-height: 76px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, .03);
         }
 
-        .content-header h2 {
-            font-size: 18px;
-            color: #285d32;
-        }
-
-        .content-header p {
+        .stat-info p {
             font-size: 12px;
-            color: #849087;
-            margin-top: 6px;
+            color: #818b84;
+            margin-bottom: 3px;
         }
 
-        /* =====================================
-           SEARCH
-        ===================================== */
-        .search-box {
-            position: relative;
-            width: 255px;
-            flex-shrink: 0;
+        .stat-info h2 {
+            font-size: 21px;
+            font-weight: 800;
+            color: #304238;
         }
 
-        .search-box input {
-            width: 100%;
-            padding: 11px 13px 11px 38px;
-            border: 1px solid #e2e9df;
-            border-radius: 10px;
-            outline: none;
-            font-size: 12px;
-            background: #fafcf9;
-            transition: .2s;
+        .text-green {
+            color: #16845c !important;
         }
 
-        .search-box input:focus {
-            border-color: #266210;
-            box-shadow: 0 0 0 3px rgba(38, 98, 16, .08);
-            background: #ffffff;
+        .text-red {
+            color: #dc3156 !important;
         }
 
-        .search-icon {
-            position: absolute;
-            left: 13px;
-            top: 10px;
-            color: #849087;
+        .text-blue {
+            color: #2580b4 !important;
         }
 
-        /* =====================================
-           TABLE
-        ===================================== */
-        .table-wrapper {
-            width: 100%;
-            overflow-x: auto;
-            border: 1px solid #e8ede5;
-            border-radius: 10px;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        thead {
-            background: #f3f6f1;
-        }
-
-        th {
-            padding: 15px 14px;
-            text-align: left;
-            font-size: 11px;
-            color: #526b56;
-            font-weight: 700;
-            border-bottom: 1px solid #e5ebe2;
-        }
-
-        td {
-            padding: 15px 14px;
-            border-bottom: 1px solid #edf0eb;
-            font-size: 12px;
-            color: #536057;
-        }
-
-        tbody tr {
-            transition: .2s;
-        }
-
-        tbody tr:hover {
-            background: #f7faf5;
-        }
-
-        tbody tr:last-child td {
-            border-bottom: none;
-        }
-
-        /* =====================================
-           USER IDENTITY
-        ===================================== */
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 11px;
-        }
-
-        .user-avatar {
-            width: 37px;
-            height: 37px;
-            border-radius: 50%;
-            background: #e7f4eb;
-            color: #266210;
+        .stat-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: 11px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 13px;
-            font-weight: 700;
+            font-size: 16px;
             flex-shrink: 0;
         }
 
-        .user-name {
-            font-weight: 600;
-            color: #285d32;
+        .icon-green {
+            background: #d8f8e9;
+        }
+
+        .icon-light-green {
+            background: #e9f8ed;
+        }
+
+        .icon-red {
+            background: #fff0f1;
+        }
+
+        .icon-blue {
+            background: #eaf5ff;
+        }
+
+        /* ================= FILTER ================= */
+
+        .filter-card {
+            background: white;
+            border: 1px solid #e8ece9;
+            border-radius: 15px;
+            padding: 18px 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, .03);
+        }
+
+        .filter-form {
+            display: flex;
+            align-items: end;
+            gap: 12px;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+        }
+
+        .filter-group label {
+            font-size: 12px;
+            font-weight: 700;
+            color: #4c5c51;
+        }
+
+        .filter-group input,
+        .filter-group select {
+            width: 100%;
+            height: 42px;
+            padding: 0 12px;
+            border: 1px solid #dce4de;
+            border-radius: 8px;
+            outline: none;
+            background: white;
+            color: #536158;
             font-size: 12px;
         }
 
-        .user-email {
-            color: #929b93;
+        .filter-group input:focus,
+        .filter-group select:focus {
+            border-color: #347d61;
+            box-shadow: 0 0 0 3px rgba(52, 125, 97, .1);
+        }
+
+        .search-group {
+            flex: 1;
+            min-width: 180px;
+        }
+
+        .condition-group,
+        .date-group {
+            width: 160px;
+            flex-shrink: 0;
+        }
+
+        .btn-filter {
+            height: 42px;
+            padding: 0 19px;
+            border: none;
+            border-radius: 8px;
+            background: #286c53;
+            color: white;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .btn-filter:hover {
+            background: #1e573f;
+        }
+
+        .search-wrapper {
+            position: relative;
+            width: 100%;
+        }
+
+        .search-wrapper input {
+            width: 100%;
+        }
+
+        .suggestion-box {
+            display: none;
+            position: absolute;
+            top: calc(100% + 7px);
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid #e1e9e3;
+            border-radius: 11px;
+            box-shadow: 0 8px 22px rgba(35, 75, 51, .12);
+            z-index: 100;
+            max-height: 260px;
+            overflow-y: auto;
+            padding: 6px;
+        }
+
+        .suggestion-box.show {
+            display: block;
+        }
+
+        .suggestion-item {
+            width: 100%;
+            border: none;
+            background: white;
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            padding: 10px;
+            border-radius: 8px;
+            text-align: left;
+            cursor: pointer;
+            transition: .2s;
+        }
+
+        .suggestion-item:hover,
+        .suggestion-item.active {
+            background: #f0f8f2;
+        }
+
+        .suggestion-avatar {
+            width: 36px;
+            height: 36px;
+            flex-shrink: 0;
+            border-radius: 50%;
+            background: #e2f4e9;
+            color: #286c53;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 800;
+        }
+
+        .suggestion-details {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            min-width: 0;
+        }
+
+        .suggestion-name {
+            font-size: 13px;
+            font-weight: 800;
+            color: #35483c;
+        }
+
+        .suggestion-email {
             font-size: 11px;
-            margin-top: 4px;
+            color: #8a948d;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
-        /* =====================================
-           ROLE BADGE
-        ===================================== */
-        .role-badge {
-            display: inline-block;
-            padding: 6px 11px;
+        .suggestion-empty {
+            padding: 14px 10px;
+            text-align: center;
+            color: #8a948d;
+            font-size: 12px;
+        }
+
+        .user-section {
+            background: white;
+            border: 1px solid #e8ece9;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, .03);
+        }
+
+        .section-heading {
+            margin-bottom: 17px;
+        }
+
+        .section-heading h3 {
+            font-size: 18px;
+            font-weight: 800;
+            color: #304238;
+            margin-bottom: 5px;
+        }
+
+        .section-heading p {
+            font-size: 12px;
+            color: #879189;
+        }
+
+        .user-list {
+            display: flex;
+            flex-direction: column;
+            gap: 11px;
+        }
+
+        .user-card {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            padding: 13px 15px;
+            border: 1px solid #edf0ed;
+            border-radius: 11px;
+            transition: .2s;
+        }
+
+        .user-card:hover {
+            border-color: #b8d9c5;
+            background: #fbfefb;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-width: 0;
+        }
+
+        .user-avatar {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: #e2f4e9;
+            color: #286c53;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 16px;
+            font-weight: 800;
+            flex-shrink: 0;
+        }
+
+        .user-details h4 {
+            font-size: 14px;
+            font-weight: 800;
+            color: #35483c;
+            margin-bottom: 3px;
+        }
+
+        .user-details p {
+            font-size: 11px;
+            color: #8a948d;
+        }
+
+        .btn-view {
             background: #e7f4eb;
-            color: #266210;
-            border-radius: 20px;
-            font-size: 10px;
-            font-weight: 600;
-        }
-
-        /* =====================================
-           DETAIL BUTTON
-        ===================================== */
-        .detail-button {
-            display: inline-block;
-            padding: 9px 14px;
-            background: #266210;
-            color: #ffffff;
+            color: #286c53;
             text-decoration: none;
+            padding: 9px 15px;
             border-radius: 8px;
             font-size: 11px;
-            font-weight: 600;
+            font-weight: 800;
             white-space: nowrap;
             transition: .2s;
         }
 
-        .detail-button:hover {
-            background: #285d32;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 9px rgba(38, 98, 16, .16);
+        .btn-view:hover {
+            background: #286c53;
+            color: white;
         }
 
-        /* =====================================
-           EMPTY STATE
-        ===================================== */
-        .empty-state {
+        .empty-user {
             text-align: center;
-            padding: 45px 15px;
-            color: #929b93;
+            padding: 30px 15px;
+            color: #8a948d;
+            font-size: 13px;
         }
 
-        .empty-icon {
-            font-size: 35px;
-            margin-bottom: 12px;
-        }
+        /* ================= RESPONSIVE TABLET ================= */
 
-        .empty-state h3 {
-            font-size: 15px;
-            color: #285d32;
-            margin-bottom: 7px;
-        }
-
-        .empty-state p {
-            font-size: 12px;
-        }
-
-        .no-result {
-            display: none;
-            text-align: center;
-            padding: 25px;
-            font-size: 12px;
-            color: #929b93;
-        }
-
-        /* =====================================
-           FOOTER
-        ===================================== */
-        .page-footer {
-            text-align: center;
-            font-size: 11px;
-            color: #929b93;
-            margin-top: 24px;
-        }
-
-        /* =====================================
-           RESPONSIVE DESKTOP 1024px
-        ===================================== */
-        @media screen and (min-width: 1024px) and (max-width: 1024px) {
-
-            .monitoring-page {
-                width: 1024px;
-                max-width: 1024px;
-                padding: 35px 38px;
-                margin: 0 auto;
+        @media (max-width: 1024px) {
+            .container {
+                width: 94%;
+                max-width: 850px;
+                padding-top: 16px;
             }
 
             .page-header {
+                padding: 19px 23px;
+                min-height: 105px;
+            }
+
+            .header-left {
+                gap: 14px;
+            }
+
+            .back-button {
+                width: 44px;
+                height: 44px;
+                flex: 0 0 44px;
+                font-size: 21px;
+            }
+
+            .header-title {
+                flex: 1;
+                min-width: 0;
+            }
+
+            .header-title h1 {
+                font-size: 15px;
+            }
+
+            .header-title p {
+                font-size: 12px;
+            }
+
+            .admin-label {
+                font-size: 9px;
+                padding: 8px 13px;
+            }
+
+            .monitoring-stats {
+                max-width: 100%;
+            }
+
+            .filter-form {
+                flex-wrap: wrap;
+            }
+
+            .search-group {
+                flex-basis: 100%;
+            }
+
+            .condition-group,
+            .date-group {
+                flex: 1;
+            }
+        }
+
+        /* ================= RESPONSIVE HP ================= */
+
+        @media (max-width: 600px) {
+            .container {
+                width: 94%;
+                padding-top: 12px;
+            }
+
+            .page-header {
+                padding: 17px 14px;
+                min-height: 90px;
+                border-radius: 17px;
+                gap: 10px;
+            }
+
+            .header-left {
+                gap: 10px;
+            }
+
+            .back-button {
+                width: 38px;
+                height: 38px;
+                flex: 0 0 38px;
+                font-size: 18px;
+                border-radius: 10px;
+            }
+
+            .header-title h1 {
+                font-size: 20px;
+            }
+
+            .header-title p {
+                font-size: 10px;
+            }
+
+            .monitoring-stats {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 8px;
+                margin-bottom: 14px;
+            }
+
+            .stat-card {
+                padding: 9px 10px;
+                min-height: 65px;
+                border-radius: 11px;
+            }
+
+            .stat-info p {
+                font-size: 9px;
+            }
+
+            .stat-info h2 {
+                font-size: 18px;
+            }
+
+            .stat-icon {
+                width: 30px;
+                height: 30px;
+                font-size: 13px;
+                border-radius: 9px;
+            }
+
+            .filter-card {
+                padding: 14px;
+            }
+
+            .filter-form {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .search-group,
+            .condition-group,
+            .date-group {
+                width: 100%;
+                flex: auto;
+            }
+
+            .btn-filter {
                 width: 100%;
             }
 
-            .intro-section,
-            .summary-card,
-            .content-card {
+            .user-section {
+                padding: 15px;
+            }
+
+            .user-card {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .btn-view {
                 width: 100%;
-            }
-
-            .content-header {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-            }
-
-            .search-box {
-                width: 255px;
-            }
-
-            .table-wrapper {
-                width: 100%;
-                overflow-x: auto;
-            }
-
-            table {
-                width: 100%;
-                table-layout: fixed;
-            }
-
-            th,
-            td {
-                padding: 15px 14px;
+                text-align: center;
             }
         }
     </style>
@@ -435,226 +603,506 @@
 
 <body>
 
-    <div class="monitoring-page">
-
-        <!-- HEADER -->
+    <div class="container">
         <div class="page-header">
 
             <div class="header-left">
 
                 <a href="{{ route('admin.dashboard') }}" class="back-button">
-                    &#8592;
+                    <i class="fa-solid fa-arrow-left"></i>
                 </a>
 
-                <div>
-                    <h1 class="page-title">Monitoring Pengguna</h1>
-
-                    <p class="page-subtitle">
-                        Pantau perkembangan tanaman setiap pengguna UrbanFarming.
-                    </p>
+                <div class="header-title">
+                    <h1>Monitoring Pengguna</h1>
+                    <p>Pantau perkembangan tanaman setiap pengguna UrbanFarming.</p>
                 </div>
 
             </div>
+        </div>
 
-            <div class="admin-label">
-                Admin UrbanFarming
+        {{-- ================= KARTU STATISTIK ================= --}}
+
+        <div class="monitoring-stats">
+
+            <div class="stat-card">
+                <div class="stat-info">
+                    <p>Total Data Dipantau</p>
+                    <h2>{{ $totalDipantau ?? 0 }}</h2>
+                </div>
+
+                <div class="stat-icon icon-green">🌱</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-info">
+                    <p>Kondisi Sehat</p>
+                    <h2 class="text-green">{{ $kondisiSehat ?? 0 }}</h2>
+                </div>
+
+                <div class="stat-icon icon-light-green">💚</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-info">
+                    <p>Terkena Hama / Perhatian</p>
+                    <h2 class="text-red">{{ $terkenaHama ?? 0 }}</h2>
+                </div>
+
+                <div class="stat-icon icon-red">⚠️</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-info">
+                    <p>Perawatan Selesai</p>
+                    <h2 class="text-blue">{{ $perawatanSelesai ?? 0 }}</h2>
+                </div>
+
+                <div class="stat-icon icon-blue">✔️</div>
             </div>
 
         </div>
 
 
-        <!-- SUMMARY -->
-        <div class="summary-card">
+        {{-- ================= PENCARIAN DAN FILTER ================= --}}
 
-            <div class="summary-icon">
-                &#128101;
-            </div>
+        <div class="filter-card">
 
-            <div class="summary-info">
+            <form action="{{ url()->current() }}" method="GET" class="filter-form" id="filterForm">
 
-                <p>Total Pengguna Terdaftar</p>
+                <div class="filter-group search-group">
 
-                <h3>{{ $pengguna->count() }}</h3>
+                    <label for="search">Cari Tanaman / Pengguna</label>
 
-            </div>
+                    <div class="search-wrapper">
 
-        </div>
+                        <input
+                            type="text"
+                            id="search"
+                            placeholder="Ketik nama pengguna..."
+                            value=""
+                            autocomplete="off"
+                            aria-label="Cari nama atau email pengguna"
+                            aria-autocomplete="list"
+                            aria-expanded="false"
+                            aria-controls="suggestionBox">
 
-        <!-- CONTENT -->
-        <div class="content-card">
+                        <div
+                            class="suggestion-box"
+                            id="suggestionBox"
+                            role="listbox">
+                        </div>
 
-            <div class="content-header">
-
-                <div>
-
-                    <h2>Daftar Pengguna</h2>
-
-                    <p>
-                        Pilih pengguna untuk melihat data dan perkembangan tanamannya.
-                    </p>
+                    </div>
 
                 </div>
 
-                <!-- SEARCH -->
-                <div class="search-box">
 
-                    <span class="search-icon">
-                        &#128269;
-                    </span>
+                <div class="filter-group condition-group">
+
+                    <label for="kondisi">Kondisi</label>
+
+                    <select name="kondisi" id="kondisi">
+
+                        <option value="">Semua Kondisi</option>
+
+                        <option value="Sehat" {{ request('kondisi') == 'Sehat' ? 'selected' : '' }}>
+                            Sehat
+                        </option>
+
+                        <option value="Perhatian" {{ request('kondisi') == 'Perhatian' ? 'selected' : '' }}>
+                            Perhatian
+                        </option>
+
+                        <option value="Terkena Hama" {{ request('kondisi') == 'Terkena Hama' ? 'selected' : '' }}>
+                            Terkena Hama
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="filter-group date-group">
+
+                    <label for="tanggal">Tanggal</label>
 
                     <input
-                        type="text"
-                        id="searchUser"
-                        placeholder="Cari nama pengguna..."
-                        onkeyup="searchUser()">
+                        type="date"
+                        name="tanggal"
+                        id="tanggal"
+                        value="{{ request('tanggal') }}">
 
                 </div>
 
+
+                <button type="submit" class="btn-filter">
+                    ▼ Filter
+                </button>
+
+            </form>
+
+        </div>
+
+
+        {{-- ================= DAFTAR PENGGUNA ================= --}}
+
+        <div class="user-section">
+
+            <div class="section-heading">
+
+                <h3>Daftar Pengguna</h3>
+
+                <p>
+                    Pilih pengguna untuk melihat perkembangan dan kondisi tanamannya.
+                </p>
+
             </div>
 
-            <!-- TABLE -->
-            <div class="table-wrapper">
 
-                <table>
+            <div class="user-list" id="userList">
 
-                    <thead>
+                @forelse ($pengguna as $user)
 
-                        <tr>
-                            <th style="width: 8%;">No</th>
-                            <th style="width: 38%;">Informasi Pengguna</th>
-                            <th style="width: 20%;">Status</th>
-                            <th style="width: 34%;">Aksi</th>
-                        </tr>
+                <div
+                    class="user-card"
+                    data-name="{{ strtolower($user->nama ?? $user->username ?? 'Pengguna') }}"
+                    data-email="{{ strtolower($user->email ?? '') }}">
 
-                    </thead>
+                    <div class="user-info">
 
-                    <tbody id="userTable">
+                        <div class="user-avatar">
+                            {{ strtoupper(substr($user->nama ?? $user->username ?? 'U', 0, 1)) }}
+                        </div>
 
-                        @forelse ($pengguna as $index => $user)
+                        <div class="user-details">
 
-                        <tr>
+                            <h4>
+                                {{ $user->nama ?? $user->username ?? 'Pengguna' }}
+                            </h4>
 
-                            <td>
-                                {{ $index + 1 }}
-                            </td>
+                            <p>
+                                {{ $user->email ?? 'Pengguna Urban Farming' }}
+                            </p>
 
-                            <td>
+                        </div>
 
-                                <div class="user-info">
+                    </div>
 
-                                    <div class="user-avatar">
-                                        {{ strtoupper(substr($user->username, 0, 1)) }}
-                                    </div>
+                    <a
+                        href="{{ route('admin.monitoring.tanaman', $user->id_pemilik_tanaman) }}"
+                        class="btn-view">
 
-                                    <div>
+                        Lihat Tanaman →
 
-                                        <div class="user-name">
-                                            {{ $user->username }}
-                                        </div>
+                    </a>
 
-                                        <div class="user-email">
-                                            {{ $user->email ?? '-' }}
-                                        </div>
-
-                                    </div>
-
-                                </div>
-
-                            </td>
-
-                            <td>
-
-                                <span class="role-badge">
-                                    Pengguna
-                                </span>
-
-                            </td>
-
-                            <td>
-
-                                <a
-                                    href="{{ route('admin.monitoring.tanaman', $user->id_pemilik_tanaman) }}"
-                                    class="detail-button">
-                                    Lihat Tanaman &#8594;
-                                </a>
-
-                            </td>
-
-                        </tr>
-
-                        @empty
-
-                        <tr>
-
-                            <td colspan="4">
-
-                                <div class="empty-state">
-
-                                    <div class="empty-icon">
-                                        &#127793;
-                                    </div>
-
-                                    <h3>Belum Ada Pengguna</h3>
-
-                                    <p>
-                                        Data pengguna belum tersedia.
-                                    </p>
-
-                                </div>
-
-                            </td>
-
-                        </tr>
-
-                        @endforelse
-
-                    </tbody>
-
-                </table>
-
-                <div class="no-result" id="noResult">
-                    Pengguna yang dicari tidak ditemukan.
                 </div>
 
+                @empty
+
+                <div class="empty-user">
+                    Belum ada pengguna yang terdaftar.
+                </div>
+
+                @endforelse
+
             </div>
 
-            <!-- FOOTER -->
-            <div class="page-footer">
-                Menampilkan {{ $pengguna->count() }} pengguna terdaftar.
+
+            <div class="empty-user" id="searchEmpty" style="display: none;">
+                Pengguna tidak ditemukan. Coba gunakan kata kunci lain.
             </div>
 
         </div>
 
     </div>
 
-    <!-- JAVASCRIPT SEARCH -->
+
+    {{-- ================= JAVASCRIPT AUTOCOMPLETE ================= --}}
+
     <script>
-        function searchUser() {
+        document.addEventListener('DOMContentLoaded', function() {
 
-            const input = document.getElementById('searchUser');
-            const filter = input.value.toLowerCase();
+            const searchInput = document.getElementById('search');
+            const suggestionBox = document.getElementById('suggestionBox');
+            const userCards = Array.from(document.querySelectorAll('.user-card'));
+            const searchEmpty = document.getElementById('searchEmpty');
 
-            const rows = document.querySelectorAll('#userTable tr');
-            const noResult = document.getElementById('noResult');
+            let activeIndex = -1;
 
-            let visibleCount = 0;
+            function normalizeText(text) {
+                return (text || '').toLowerCase().trim();
+            }
 
-            rows.forEach(function(row) {
+            function getMatchingUsers(keyword) {
 
-                const text = row.textContent.toLowerCase();
+                return userCards.filter(function(card) {
 
-                if (text.includes(filter)) {
-                    row.style.display = '';
-                    visibleCount++;
-                } else {
-                    row.style.display = 'none';
+                    const name = normalizeText(card.dataset.name);
+                    const email = normalizeText(card.dataset.email);
+
+                    return name.includes(keyword) || email.includes(keyword);
+
+                });
+
+            }
+
+            function filterUserList(keyword) {
+
+                const matchingUsers = getMatchingUsers(keyword);
+
+                userCards.forEach(function(card) {
+
+                    const name = normalizeText(card.dataset.name);
+                    const email = normalizeText(card.dataset.email);
+
+                    const matches =
+                        keyword === '' ||
+                        name.includes(keyword) ||
+                        email.includes(keyword);
+
+                    card.style.display = matches ? 'flex' : 'none';
+
+                });
+
+                if (searchEmpty) {
+
+                    searchEmpty.style.display =
+                        keyword !== '' && matchingUsers.length === 0 ?
+                        'block' :
+                        'none';
+
+                }
+
+            }
+
+            function hideSuggestions() {
+
+                suggestionBox.classList.remove('show');
+                suggestionBox.innerHTML = '';
+
+                searchInput.setAttribute('aria-expanded', 'false');
+
+                activeIndex = -1;
+
+            }
+
+            function showSuggestions(keyword) {
+
+                suggestionBox.innerHTML = '';
+
+                activeIndex = -1;
+
+                if (keyword === '') {
+
+                    hideSuggestions();
+
+                    return;
+
+                }
+
+                const matchingUsers = getMatchingUsers(keyword).slice(0, 6);
+
+                if (matchingUsers.length === 0) {
+
+                    const emptyMessage = document.createElement('div');
+
+                    emptyMessage.className = 'suggestion-empty';
+                    emptyMessage.textContent = 'Pengguna tidak ditemukan.';
+
+                    suggestionBox.appendChild(emptyMessage);
+
+                    suggestionBox.classList.add('show');
+
+                    searchInput.setAttribute('aria-expanded', 'true');
+
+                    return;
+
+                }
+
+                matchingUsers.forEach(function(card) {
+
+                    const name =
+                        card.querySelector('.user-details h4')?.textContent.trim() || 'Pengguna';
+
+                    const email =
+                        card.querySelector('.user-details p')?.textContent.trim() || '';
+
+                    const initial = name.charAt(0).toUpperCase();
+
+                    const button = document.createElement('button');
+
+                    button.type = 'button';
+                    button.className = 'suggestion-item';
+                    button.setAttribute('role', 'option');
+                    button.setAttribute('aria-selected', 'false');
+
+                    const avatar = document.createElement('div');
+                    avatar.className = 'suggestion-avatar';
+                    avatar.textContent = initial;
+
+                    const details = document.createElement('div');
+                    details.className = 'suggestion-details';
+
+                    const nameElement = document.createElement('span');
+                    nameElement.className = 'suggestion-name';
+                    nameElement.textContent = name;
+
+                    const emailElement = document.createElement('span');
+                    emailElement.className = 'suggestion-email';
+                    emailElement.textContent = email;
+
+                    details.appendChild(nameElement);
+                    details.appendChild(emailElement);
+
+                    button.appendChild(avatar);
+                    button.appendChild(details);
+
+                    button.addEventListener('click', function() {
+                        selectSuggestion(card, name);
+                    });
+
+                    suggestionBox.appendChild(button);
+
+                });
+
+                suggestionBox.classList.add('show');
+
+                searchInput.setAttribute('aria-expanded', 'true');
+
+            }
+
+            function selectSuggestion(card, name) {
+
+                searchInput.value = name;
+
+                userCards.forEach(function(userCard) {
+
+                    userCard.style.display =
+                        userCard === card ? 'flex' : 'none';
+
+                });
+
+                if (searchEmpty) {
+                    searchEmpty.style.display = 'none';
+                }
+
+                hideSuggestions();
+
+                searchInput.focus();
+
+            }
+
+            searchInput.addEventListener('input', function() {
+
+                const keyword = normalizeText(this.value);
+
+                filterUserList(keyword);
+
+                showSuggestions(keyword);
+
+            });
+
+            searchInput.addEventListener('focus', function() {
+
+                const keyword = normalizeText(this.value);
+
+                if (keyword !== '') {
+                    showSuggestions(keyword);
                 }
 
             });
 
-            noResult.style.display =
-                visibleCount === 0 ? 'block' : 'none';
-        }
+            searchInput.addEventListener('keydown', function(event) {
+
+                const items =
+                    suggestionBox.querySelectorAll('.suggestion-item');
+
+                if (event.key === 'Escape') {
+
+                    hideSuggestions();
+
+                    return;
+
+                }
+
+                if (!suggestionBox.classList.contains('show') || items.length === 0) {
+                    return;
+                }
+
+                if (event.key === 'ArrowDown') {
+
+                    event.preventDefault();
+
+                    activeIndex = (activeIndex + 1) % items.length;
+
+                    updateActiveSuggestion(items);
+
+                }
+
+                if (event.key === 'ArrowUp') {
+
+                    event.preventDefault();
+
+                    activeIndex =
+                        activeIndex <= 0 ?
+                        items.length - 1 :
+                        activeIndex - 1;
+
+                    updateActiveSuggestion(items);
+
+                }
+
+                if (event.key === 'Enter' && activeIndex >= 0) {
+
+                    event.preventDefault();
+
+                    items[activeIndex].click();
+
+                }
+
+            });
+
+            function updateActiveSuggestion(items) {
+
+                items.forEach(function(item, index) {
+
+                    const isActive = index === activeIndex;
+
+                    item.classList.toggle('active', isActive);
+
+                    item.setAttribute(
+                        'aria-selected',
+                        isActive ? 'true' : 'false'
+                    );
+
+                });
+
+                if (items[activeIndex]) {
+
+                    items[activeIndex].scrollIntoView({
+                        block: 'nearest'
+                    });
+
+                }
+
+            }
+
+            document.addEventListener('click', function(event) {
+
+                if (!event.target.closest('.search-wrapper')) {
+                    hideSuggestions();
+                }
+
+            });
+
+            searchInput.value = '';
+
+            filterUserList('');
+
+            hideSuggestions();
+
+        });
     </script>
 
 </body>
