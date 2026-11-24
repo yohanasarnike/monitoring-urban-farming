@@ -49,9 +49,7 @@
             <a href="/profil"><i class="fa-regular fa-user"></i> Profil</a>
             <form action="{{ route('logout') }}" method="POST" style="display: inline;">
                 @csrf
-                <button type="submit" style="background: none; border: none; color: inherit; font: inherit; cursor: pointer; padding: 0 10px;">
-                    <i class="fa-solid fa-right-from-bracket"></i> Keluar
-                </button>
+
             </form>
         </div>
     </div>
