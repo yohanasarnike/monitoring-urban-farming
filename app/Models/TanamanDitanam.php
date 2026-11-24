@@ -21,7 +21,9 @@ class TanamanDitanam extends Model
 
     public function perawatan()
     {
-        return $this->hasMany(Perawatan::class, 'id_tanaman_ditanam', 'id_tanaman_ditanam');
+        return $this->hasMany(Perawatan::class, 
+        'id_tanaman_ditanam', 
+        'id_tanaman_ditanam');
     }
 }
 
