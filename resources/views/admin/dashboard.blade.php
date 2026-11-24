@@ -279,7 +279,7 @@
                 <p>Pantau tanaman setiap pengguna</p>
             </a>
 
-             <a href="{{ route('admin.konsultasi.index') }}" class="feature-card">
+             <a href="" class="feature-card">
                 <div class="feature-icon">
                     <i class="fa-regular fa-comments"></i>
                 </div>

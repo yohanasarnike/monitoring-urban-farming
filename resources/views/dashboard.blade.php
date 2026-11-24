@@ -18,7 +18,34 @@
         <h2 style="">🌱 Selamat Datang, {{ Auth::user()->nama ?? Auth::user()->username }}!</h2>
         <div class="nav-links">
             <a href="/dashboard" class="active">Beranda</a>
-            <a href="/notifikasi" class="notification-badge"><i class="fa-regular fa-bell"></i> Notifikasi</a>
+            <a href="/notifikasi" style="position: relative; display: inline-flex; align-items: center; gap: 6px;">
+                <span style="position: relative; display: inline-flex; align-items: center;">
+                    <i class="fa-regular fa-bell" style="font-size: 1.15rem;"></i>
+                    @if(isset($jumlahNotifBelumDikerjakan) && $jumlahNotifBelumDikerjakan > 0)
+                        <span style="
+                            position: absolute;
+                            top: -7px;
+                            right: -8px;
+                            background-color: #ef4444;
+                            color: #ffffff;
+                            font-size: 11px;
+                            font-weight: 700;
+                            min-width: 18px;
+                            height: 18px;
+                            padding: 0 5px;
+                            border-radius: 9999px;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            line-height: 1;
+                            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+                        ">
+                            {{ $jumlahNotifBelumDikerjakan }}
+                        </span>
+                    @endif
+                </span>
+                Notifikasi
+            </a>
             <a href="/profil"><i class="fa-regular fa-user"></i> Profil</a>
             <form action="{{ route('logout') }}" method="POST" style="display: inline;">
                 @csrf
