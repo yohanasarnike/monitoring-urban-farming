@@ -5,6 +5,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ConsultationController;
 use App\Http\Controllers\TanamanController;
 use App\Http\Controllers\DashboardSistem;
+use App\Http\Controllers\NotifikasiController; // <-- 1. Import controller baru
 
 // Redirect utama ke login
 Route::get('/', function () {
@@ -22,10 +23,9 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::get('/dashboard', [TanamanController::class, 'index'])->name('dashboard');
 Route::get('/dashboard.sistem', [DashboardSistem::class, 'index'])->name('dashboard.sistem');
 
-// Notifikasi
-Route::get('/notifications', function () {
-    return view('notifications');
-})->name('notifications');
+// Notifikasi (2. Arahkan ke NotifikasiController, hapus yang dobel di bawah)
+Route::get('/notifications', [NotifikasiController::class, 'index'])->name('notifications');
+Route::get('/notifikasi', [NotifikasiController::class, 'index'])->name('notifikasi');
 
 // Konsultasi
 Route::get('/konsultasi', function () {
@@ -40,8 +40,3 @@ Route::get('/tanaman/tambah', [TanamanController::class, 'create'])->name('tanam
 Route::post('/tanaman/tambah', [TanamanController::class, 'store'])->name('tanaman.store');
 Route::get('/jadwal-perawatan', [TanamanController::class, 'jadwalIndex'])->name('jadwal.index');
 Route::post('/perawatan/update/{id}', [TanamanController::class, 'updatePerawatan'])->name('perawatan.update');
-
-//Notifikasi
-Route::get('/notifikasi', function () {
-    return view('notifications');
-});
