@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\Admin\DashboardController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AdminController;
@@ -8,7 +7,6 @@ use App\Http\Controllers\ConsultationController;
 use App\Http\Controllers\TanamanController;
 use App\Http\Controllers\DashboardSistem;
 use App\Http\Controllers\NotifikasiController;
-
 
 // Redirect utama ke login
 Route::get('/', function () {
@@ -19,29 +17,6 @@ Route::get('/', function () {
 Route::get('/login', [AuthController::class, 'showLogin'])
     ->name('login');
 
-// Dashboard pengguna & utama
-Route::get('/dashboard', [TanamanController::class, 'index'])->name('dashboard');
-Route::get('/dashboard.sistem', [DashboardSistem::class, 'index'])->name('dashboard.sistem');
-
-
-// Notifikasi
-Route::get('/notifications', function () {
-    return view('notifications');
-})->name('notifications');
-
-// Konsultasi
-Route::get('/konsultasi', function () {
-    return view('konsultasi.welcome');
-})->name('konsultasi.welcome');
-
-Route::get('/konsultasi/chat', [ConsultationController::class, 'index'])->name('konsultasi.chat');
-Route::post('/konsultasi/send', [ConsultationController::class, 'store'])->name('konsultasi.send');
-
-// Tanaman & Jadwal Perawatan
-Route::get('/tanaman/tambah', [TanamanController::class, 'create']);
-Route::post('/tanaman/tambah', [TanamanController::class, 'store']);
-
-//authentikasi
 Route::post('/login', [AuthController::class, 'login'])
     ->name('login.process');
 
@@ -58,31 +33,8 @@ Route::post('/logout', [AuthController::class, 'logout'])
 Route::get('/dashboard', [TanamanController::class, 'index'])
     ->name('dashboard');
 
-
-//jadwal perawatan
-Route::get('/jadwal-perawatan', [TanamanController::class, 'jadwalIndex'])->name('jadwal.index');
-Route::post('/perawatan/update/{id}', [TanamanController::class, 'updatePerawatan'])->name('perawatan.update');
-
-
-
-//dashboard admin
-Route::middleware(['auth'])->group(function () {
-    Route::get('/admin/dashboard', [DashboardController::class, 'index'])
-        ->name('admin.dashboard');
-
-//kelola data tanaman
-    Route::get('/kelola-data', [DashboardController::class, 'kelolaData'])
-        ->name('admin.kelola-data');
-
-    Route::post('/admin/kelola-data', [DashboardController::class, 'storeKriteria'])
-        ->name('admin.kelola-data.store');
-
-    Route::put('/admin/kelola-data/{id}', [DashboardController::class, 'updateKriteria'])
-        ->name('admin.kelola-data.update');
-
-    Route::delete('/admin/kelola-data/{id}', [DashboardController::class, 'destroyKriteria'])
-        ->name('admin.kelola-data.destroy');
-});
+Route::get('/dashboard.sistem', [DashboardSistem::class, 'index'])
+    ->name('dashboard.sistem');
 
 // Notifikasi
 Route::get('/notifications', [NotifikasiController::class, 'index'])
@@ -91,7 +43,7 @@ Route::get('/notifications', [NotifikasiController::class, 'index'])
 Route::get('/notifikasi', [NotifikasiController::class, 'index'])
     ->name('notifikasi');
 
-// Konsultasi
+// Konsultasi User
 Route::get('/konsultasi', function () {
     return view('konsultasi.welcome');
 })->name('konsultasi.welcome');
@@ -102,18 +54,21 @@ Route::get('/konsultasi/chat', [ConsultationController::class, 'index'])
 Route::post('/konsultasi/send', [ConsultationController::class, 'store'])
     ->name('konsultasi.send');
 
+Route::get('/konsultasi/messages', [ConsultationController::class, 'fetchMessages'])
+    ->name('konsultasi.messages');
+
 // Tanaman & Jadwal Perawatan
-// Route::get('/tanaman/tambah', [TanamanController::class, 'create'])
-//     ->name('tanaman.create');
+Route::get('/tanaman/tambah', [TanamanController::class, 'create'])
+    ->name('tanaman.create');
 
-// Route::post('/tanaman/tambah', [TanamanController::class, 'store'])
-//     ->name('tanaman.store');
+Route::post('/tanaman/tambah', [TanamanController::class, 'store'])
+    ->name('tanaman.store');
 
-// Route::get('/jadwal-perawatan', [TanamanController::class, 'jadwalIndex'])
-//     ->name('jadwal.index');
+Route::get('/jadwal-perawatan', [TanamanController::class, 'jadwalIndex'])
+    ->name('jadwal.index');
 
-// Route::post('/perawatan/update/{id}', [TanamanController::class, 'updatePerawatan'])
-//     ->name('perawatan.update');
+Route::post('/perawatan/update/{id}', [TanamanController::class, 'updatePerawatan'])
+    ->name('perawatan.update');
 
 // Forgot Password
 Route::get('/forgot-password', [AuthController::class, 'showForgotPassword'])
@@ -129,7 +84,7 @@ Route::get('/reset-password/{token}', [AuthController::class, 'showResetPassword
 Route::post('/reset-password', [AuthController::class, 'resetPassword'])
     ->name('password.update');
 
-// Dashboard dan Monitoring Admin
+// Dashboard, Monitoring, dan Konsultasi Admin
 Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
 
     Route::get('/dashboard', [AdminController::class, 'index'])
@@ -148,55 +103,20 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
         '/admin/perawatan/{id}/update-catatan',
         [AdminController::class, 'updateKondisiCatatan']
     )->name('admin.perawatan.update');
+
+    // Konsultasi Admin
+    Route::get('/konsultasi', [AdminController::class, 'konsultasi'])
+        ->name('admin.konsultasi');
+
+    Route::post('/konsultasi/{userId}/status', [AdminController::class, 'konsultasiUpdateStatus'])
+        ->name('admin.konsultasi.status');
+
+    Route::get('/konsultasi/{userId}/chat', [AdminController::class, 'konsultasiChat'])
+        ->name('admin.konsultasi.chat');
+
+    Route::post('/konsultasi/{userId}/reply', [AdminController::class, 'konsultasiReply'])
+        ->name('admin.konsultasi.reply');
+
+    Route::get('/konsultasi/{userId}/messages', [AdminController::class, 'konsultasiFetchMessages'])
+        ->name('admin.konsultasi.messages');
 });
-
-
-
-// Notifikasi
-// Route::get('/notifications', function () {
-//     return view('notifications');
-// })->name('notifications');
-
-// Route::get('/notifikasi', function () {
-//     return view('notifications');
-// });
-
-// // Konsultasi
-// Route::get('/konsultasi', function () {
-//     return view('konsultasi.welcome');
-// })->name('konsultasi.welcome');
-// Route::get('/konsultasi/chat', [ConsultationController::class, 'index'])
-//     ->name('konsultasi.chat');
-// Route::post('/konsultasi/send', [ConsultationController::class, 'store'])
-//     ->name('konsultasi.send');
-// Route::get('/konsultasi/messages', [ConsultationController::class, 'getMessages'])
-//     ->name('konsultasi.messages');
-
-
-// Tanaman dan jadwal perawatan
-// Route::get('/tanaman/tambah', [TanamanController::class, 'create'])
-//     ->name('tanaman.create');
-
-// Route::post('/tanaman/tambah', [TanamanController::class, 'store'])
-//     ->name('tanaman.store');
-
-// Route::get('/jadwal-perawatan', [TanamanController::class, 'jadwalIndex'])
-//     ->name('jadwal.index');
-
-// Route::post('/perawatan/update/{id}', [TanamanController::class, 'updatePerawatan'])
-//     ->name('perawatan.update');
-
-// Forgot Password
-// Route::get('/forgot-password', [AuthController::class, 'showForgotPassword'])
-//     ->name('password.request');
-
-// Route::post('/forgot-password', [AuthController::class, 'sendResetLink'])
-//     ->name('password.email');
-
-// // Reset Password
-// Route::get('/reset-password/{token}', [AuthController::class, 'showResetPassword'])
-//     ->name('password.reset');
-
-// Route::post('/reset-password', [AuthController::class, 'resetPassword'])
-//     ->name('password.update');
-
