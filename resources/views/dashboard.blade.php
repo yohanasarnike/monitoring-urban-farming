@@ -10,6 +10,15 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="{{ asset('css/dashboardUtama.css') }}">
 </head>
+<style>
+    body {
+        background-image: url('/img/bg.png');
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+    }
+</style>
 
 <body>
 
@@ -22,7 +31,7 @@
                 <span style="position: relative; display: inline-flex; align-items: center;">
                     <i class="fa-regular fa-bell" style="font-size: 1.15rem;"></i>
                     @if(isset($jumlahNotifBelumDikerjakan) && $jumlahNotifBelumDikerjakan > 0)
-                        <span style="
+                    <span style="
                             position: absolute;
                             top: -7px;
                             right: -8px;
@@ -40,8 +49,8 @@
                             line-height: 1;
                             box-shadow: 0 2px 4px rgba(0,0,0,0.2);
                         ">
-                            {{ $jumlahNotifBelumDikerjakan }}
-                        </span>
+                        {{ $jumlahNotifBelumDikerjakan }}
+                    </span>
                     @endif
                 </span>
                 Notifikasi
